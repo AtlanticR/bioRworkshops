@@ -29,10 +29,10 @@
 {Keeping track of computer work (e.g. R code) using Git}
 
 \subtitle
-{}
+{BIO R workshop series}
 
 \author
-{Clark Richards}
+{Clark Richards and Ryan Stanley}
 % - Use the \inst{?} command only if the authors have different
 %   affiliation.
 
@@ -87,11 +87,11 @@
 
 \begin{frame}{Is git useful for me?}
 
-Do you do any of the following:
+Do you ...
 \begin{itemize}
 \item<1-4> type text into a computer?
 \item<2-4> hate losing (important) work?
-\item<3> work from more than one computer?
+\item<3-4> work from more than one computer?
 \item<4> like knowing that your painstakingly written and brilliant
   code is backed up reliably?
 \end{itemize}
@@ -101,7 +101,10 @@ Do you do any of the following:
 \begin{frame}
 
   Do you have folders like this?
-  
+  \begin{figure}
+    \centering
+    \includegraphics[height=0.9\textheight]{versioncontrol}
+  \end{figure}
 
 \end{frame}
 
@@ -128,7 +131,8 @@ Do you do any of the following:
     Using the software
     \begin{itemize}
         \item Terminal / command-line
-        \item GitHub for Mac
+        \item \textbf{RStudio}
+        \item GitHub Desktop
         \item SourceTree
     \end{itemize}
     Hosting your repository
@@ -136,54 +140,81 @@ Do you do any of the following:
         \item Locally
         \item Github
         \item Bitbucket
+        \item ...
     \end{itemize}
 \end{frame}
 
 \begin{frame}{How do I use it?}
+
+  \begin{figure}
+    \centering
+    \includegraphics[height=0.9\textheight]{git}
+  \end{figure}
+  
+\end{frame}
+
+\begin{frame}[fragile]{How do I use it?}
   \begin{itemize}
-  \item Create a repository (repo)
-  \item add files to the repo
-  \item make changes
-  \item commit changes
-  \item \textit{Optional: push changes}
+  \item Create a repository (repo): \verb|git init|
+  \item add files to the repo: \verb|git add file.txt|
+  \item make changes to the file
+  \item commit changes: \verb|git commit|
+  \item When using ``remotes'', push changes: \verb|git push|
   \item repeat!
   \end{itemize}
 
 \end{frame}
 
-\begin{frame}[fragile]
-    \begin{block}{Branching}
-        Helps keep track when things aren't linear in time.
+% \begin{frame}[fragile]
+%     \begin{block}{Branching}
+%         Helps keep track when things aren't linear in time.
 
-        Example uses:
-        \begin{itemize}
-            \item Collaborating (e.g. on a paper)
-            \item Experimenting / working on multiple things in parallel
-        \end{itemize}
+%         Example uses:
+%         \begin{itemize}
+%             \item Collaborating (e.g. on a paper)
+%             \item Experimenting / working on multiple things in parallel
+%         \end{itemize}
 
-        \begin{verbatim}
+%         \begin{verbatim}
 
-git checkout -b "paper-revisions"
-(make changes)
-git checkout master
-git merge paper-revisions
+% git checkout -b "paper-revisions"
+% (make changes)
+% git checkout master
+% git merge paper-revisions
 
-        \end{verbatim}
-    \end{block}
-\end{frame}
+%         \end{verbatim}
+%     \end{block}
+% \end{frame}
 
-\begin{frame}{Github.com}
+\begin{frame}{\includegraphics[width=0.4\textwidth]{github}}
 
-  Github.com is \textit{the} premier cloud-based git repository hosting
-  service. Basic accounts are free, which allows you to host as many
+  Github.com is one of the most popular cloud-based git repository hosting
+  services. Basic accounts are free, which allows you to host as many
   \textbf{public} repos as you want. To have \textbf{private} repos,
   you need to either:
   \begin{itemize}
-  \item pay money for a higher level account (\$7/month - \$50/month)
-  \item sign up for an academic discount (free micro plan) at  \url{https://github.com/blog/1840-improving-github-for-science\#Awesome_science_happening_on_Github}
+  \item pay money for a higher level account
+  \item sign up for a Github education account 
   \end{itemize}
+
+  \pause
+
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.7\textwidth]{comic1}
+  \end{figure}
+  
+\end{frame}
+
+\begin{frame}{Using Git through RStudio}
+
 
 
 \end{frame}
 
 \end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
