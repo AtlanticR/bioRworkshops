@@ -1,7 +1,7 @@
 ---
-title: R Basics
-author: Clark Richards
-date: Oct. 20 2017
+title: "R Basics"
+author: "Clark Richards"
+date: "Oct. 20 2017"
 ---
 
 # Introduction
@@ -88,15 +88,66 @@ R uses 3 kinds of brackets:
 2. Square brackets: `[]`. These are used exclusively for accessing or indexing into objects that have more than one element (more on this later). For example, to access the 5th element of a vector `a`, do `a[5]`. In some cases (e.g. with lists and data frames), a double square bracket `[[]]` can be used to access different portions of the object (list elements or named objects in a list).
 
 3. Curly brackets: `{}`. These are used exclusively for delimiting "control flow" statements in code, for things such as `for`/`while` loops, conditional `if` statements, and function definition. And example for loop and function definition:
-```{r eval=FALSE}
-for (i in 1:10) {
-    print(i`)
-}
+    ```{r eval=FALSE}
+    for (i in 1:10) {
+        print(i)
+    }
+    
+    myFunction <- function(a, b) {
+        a*b
+    }
+    ```
 
-myFunction <- function(a, b) {
-    a*b
-}
-```
+## Comments
+
+Comments can be added to R code using the `#` character. Adding `#` at the beginning of a line will cause R to ignore the entire line, while including it partway along will cause the *rest* of the line to be ignored.
 
 # Object types in R
 
+R has a number of different object types, used for storing data or the results from functions or analysis. Broadly, the different types can be distinguished as:
+
+1. Vectors: vectors that only store one data "type" (character, numeric, integer, logical, complex, and raw)
+
+2. Data structures: which can store different data types together (lists and data frames),
+
+3. Arrays: really just vectors but with dimensions
+
+Vectors in R are *not* matrices -- that is they don't have an orientation (row vector or column vector, as in Matlab). It is possible to define matrices of a single row or column (but why would you want to do that?).
+
+Details about an object can be found using various functions, including: `class()`, `typeof()`, `length()`, and `attributes()`. For example
+```{r}
+a <- 1:10    # create a sequence of numbers
+class(a)
+typeof(a)
+length(a)
+attributes(a)
+```
+Vectors can be "combined" with the `c()` function:
+```{r}
+a <- 1:10
+b <- 11:20
+combined <- c(a, b)
+print(combined)
+```
+If objects of different types are combined, R will attempt to *coerce* them to a single type:
+```{r}
+a <- 1:10
+b <- "b"
+combined <- c(a, b)
+class(combined) # everything was converted to a character!
+```
+If you want to force the coercion to a specific type, use the `as.<type>()` functions, e.g.
+```{r}
+combined <- as.numeric(c(a, b))
+print(combined)
+```
+What do we get when we use `as.numeric()` on a character?
+
+## Missing values: NA
+
+R has a few other "missing" types, including: `NA` (not available), `Inf` (infinity, e.g. 1/0), and `Nan` (not a number, e.g. 0/0). The `NA` type is primarily used for designating missing values, and is extremely useful in data analysis as such. Many statistical functions (e.g. `mean()`, `sd()`, etc) have an argument that controls the behaviour in the presence of `NA` values, e.g.
+```{r}
+combined
+mean(combined) # the NA causes the entire result to become NA
+mean(combined, na.rm=TRUE)  # using na.rm=TRUE skips NAs in the calculation
+```
