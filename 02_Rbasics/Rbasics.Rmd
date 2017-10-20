@@ -1,0 +1,102 @@
+---
+title: R Basics
+author: Clark Richards
+date: Oct. 20 2017
+---
+
+# Introduction
+
+This document is intended only as a rough guide for topics to be covered in the BIO "noob" R workshop session. The intention of the workshop is to get new R users familiar with some of the basics of working and coding in the R language, and may include:
+
+* Rstudio basics (command prompt, editor, etc)
+* R language syntax (assign, brackets, arguments, etc)
+* object types (vectors, arrays, lists, data.frames, etc)
+* how to read data
+* how to make basic plots
+* how to fit models to data (linear, nonlinear)
+* ...
+
+# RStudio/running R
+
+RStudio is a Graphical User Interface (GUI) for working in the R environment. It is generally accepted as the standard for both new and power users, due to its flexibility and price (free). It is installed separately from R, and is available for all major operating systems (Linux, Mac, Windows). 
+
+However, R itself can be run in many different ways, through many different environments or editors. For example the Emacs addon ["ESS"](https://ess.r-project.org/) (Emacs Speaks Statistics) allows for the editing and running of R code within Emacs. A similar package is available for Vim, and I have heard that Microsoft Visual studio now includes an integrated development enironment (IDE) for R (likely motivated by their creation of Microsoft R open).
+
+R can also be run directly from the system, e.g. by typing "R" at a system prompt (e.g. in a terminal in Linux/OSX or at the command prompt in Windows). This allows R code to be run without even opening the code, by using either the `R` or `Rscript` executables, and command line syntax like:
+```
+Rscript -e "x <- 1:10; plot(x)"
+```
+In the case of a written script:
+```
+Rscript -e "source('script.R')"
+```
+or
+```
+R --no-save < script.R
+```
+
+# R language
+
+The R language is a flexible programming language that permits analysis, modelling, and plotting without the need for external tools. 
+
+In R, the most important operator is the "assign" operator: `<-`. It is used the *assign* values to objects (or variables). Many languages use the equals sign: `=` to do assignment, and for compatibility this will work in R too. For example the following two lines are equivalent:
+```{r, eval=FALSE}
+x <- 1
+x = 1
+```
+Everyone should code with their own style and what makes them comfortable, however my recommendation is to stick with `<-` for assigning. There are a few reasons for this:
+
+* `=` is already used exclusively within functions to identify and pass arguments, e.g. `function(arg1=1, arg2="two")`
+* the "double equals", `==`, is used for doing logical comparison, and is very different from assigning
+* the "reverse assign" also works, e.g. `1 -> x`. This is not so commonly used but can be useful for long chains of function calls, especially if one is using the pipe operator `%>%` (see the `magrittr` package)
+
+The main argument against using `<-` is that it requires two keystrokes where `=` is only one. Most IDEs include a keyboard shortcut to simplify it, e.g. `_` in Emacs and `Alt -` in RStudio
+
+## Packages
+
+R accomodates add-on code through a "package" system, whereby additional functionality (often written by other users and always available for free) can be installed and loaded with only a couple lines.
+
+Most packages that you will use are distributed through the **Comprehensive R Archive Network** or CRAN, and can be installed simply by typing:
+```{r eval=FALSE}
+install.packages("oce")
+```
+at the R prompt. Other packages not distributed through CRAN (e.g. available on Github, or developed locally by colleagues) can be installed through manual steps or by using the `devtools` package.
+
+To load a package to make its functions available for use, use the `library()` function:
+```{r eval=FALSE}
+library(oce)
+```
+
+Package development will be part of a future workshop topic, however it is likely in your daily work that you will make use of a number of packages, and the `library()` system ensures that all others who run your code will know exactly what packages they need to have installed.
+
+## Getting help
+
+A necessary condition for a function to be included in a package in R is that it is properly documented. The details are for a future "package development" workshop, but the upside is that by loading a package (at least one that is downloaded from CRAN using `install.packages`) you will always be able to read consistently organized documentation for the packages functions.
+
+To get help on a function use the `?` operator, or the `help()` function. If you don't know exactly what you're looking for try the "help search" operator `??`, e.g.:
+```{r eval=FALSE}
+??plot
+```
+or do as most do and go straight to Google/StackOverflow.
+
+## Brackets
+
+R uses 3 kinds of brackets:
+
+1. Round brackets: `()`. These are used exclusively for containing the arguments to a function, e.g. `plot(x, y, type='l')`. If a function is to be evaluated using only default arguments, it can be specified with empty brackets, e.g. `ls()`. Leaving the brackets off the function will print the source code of the function to the prompt (try it!)
+
+2. Square brackets: `[]`. These are used exclusively for accessing or indexing into objects that have more than one element (more on this later). For example, to access the 5th element of a vector `a`, do `a[5]`. In some cases (e.g. with lists and data frames), a double square bracket `[[]]` can be used to access different portions of the object (list elements or named objects in a list).
+
+3. Curly brackets: `{}`. These are used exclusively for delimiting "control flow" statements in code, for things such as `for`/`while` loops, conditional `if` statements, and function definition. And example for loop and function definition:
+```{r eval=FALSE}
+for (i in 1:10) {
+    print(i`)
+}
+
+myFunction <- function(a, b) {
+    a*b
+}
+```
+
+# Object types in R
+
