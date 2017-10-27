@@ -12,15 +12,29 @@ c:\git\AtlanticR>
 ```
 
   4.  Go to https://github.com/AtlanticR/bioRworkshops, and click on the link to "Clone of download".  This should give you a slightly odd address (i.e. https://github.com/AtlanticR/bioRworkshops.git).  Copy it to your clipboard.
-  4. Back in your command window, type the command to clone the workshop.  The following example snippet will copy everything from that repository into the folder you were in  - e.g.
+  5. Back in your command window, type the command to clone the workshop.  The following example snippet will copy everything from that repository into the folder you were in  - e.g.
   
   `c:\git\AtlanticR> git clone https://github.com/AtlanticR/bioRworkshops.git`
   
 *BAM!* The entire repository gets sucked onto your computer.  At this stage, you can do whatever you want with all of that content.   If you don't want to be a dirty, no-good parasite, you can *contribute* your modifications back to the original source.  
 
+##CLONING OPTION FOR PEOPLE WHO ARE SCARED OF THE SHELL##
+
+![too many shells](ShellImage.jpg)
+
+1. Install [git](https://git-scm.com/downloads)
+
+2. Install [gitDesktop](https://desktop.github.com/)
+
+3.  Go to the [AtlanticR](https://github.com/AtlanticR/bioRworkshops) github Organization page  (or any git repository of your choosing), and click on the link to "Clone of download".
+
+4. Github desktop will come up and you can select a folder where you would like to store the 'bioRworkshops' repository. **note that you must be logged into both github online and github desktop for this handshake to go through smoothly**. 
+
+*BAM!* The entire repository gets sucked onto your computer and you avoided the shell!  
+
 ## Create an R Project (optional)
 
-You don't need R to do any of the stuff so far.  SInce this is an R workshop, I've set up my version of the repository as an R Studio Project so that I can use the git tools in R Studio to make modifications and push new content.  If you want tod od the same, follow these steps:
+You don't need R to do any of the stuff so far.  Since this is an R workshop, I've set up my version of the repository as an R Studio Project so that I can use the git tools in R Studio to make modifications and push new content.  If you want tod od the same, follow these steps:
 
   1) Open R Studio, and select "New Project"
   2) Choose "Existing Directory", and point R Studio to the path of the repository you just cloned.
