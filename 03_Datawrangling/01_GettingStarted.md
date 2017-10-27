@@ -2,8 +2,8 @@
 
 ## Getting stuff from Github onto your computer
 
-  1. Install git
-  2.  Go to https://github.com/AtlanticR/bioRworkshops (or any git repository of your choosing), and click on the link to "Clone of download".  This should give you a slightly odd address.  Copy it to your clip board.
+  1. Install [git](https://git-scm.com/downloads)
+  2.  Go to [AtlanticR](https://github.com/AtlanticR/bioRworkshops) (or any git repository of your choosing), and click on the link to "Clone of download".  This should give you a slightly odd address.  Copy it to your clip board.
   3. In a command window, navigate to a folder on your computer that you'd like to contain the repo you identified in the previous step - e.g.
 
 ```
@@ -11,14 +11,14 @@ c:\Users\mcmahonm>cd c:\git\AtlanticR
 c:\git\AtlanticR>
 ```
 
-  4.  Go to https://github.com/AtlanticR/bioRworkshops, and click on the link to "Clone of download".  This should give you a slightly odd address (i.e. https://github.com/AtlanticR/bioRworkshops.git).  Copy it to your clipboard.
+  4.  Go to [AtlanticR](https://github.com/AtlanticR/bioRworkshops), and click on the link to "Clone of download".  This should give you a slightly odd address (i.e. https://github.com/AtlanticR/bioRworkshops.git).  Copy it to your clipboard.
   5. Back in your command window, type the command to clone the workshop.  The following example snippet will copy everything from that repository into the folder you were in  - e.g.
   
   `c:\git\AtlanticR> git clone https://github.com/AtlanticR/bioRworkshops.git`
   
 *BAM!* The entire repository gets sucked onto your computer.  At this stage, you can do whatever you want with all of that content.   If you don't want to be a dirty, no-good parasite, you can *contribute* your modifications back to the original source.  
 
-##CLONING OPTION FOR PEOPLE WHO ARE SCARED OF THE SHELL##
+## CLONING OPTION FOR PEOPLE WHO ARE SCARED OF THE SHELL
 
 ![too many shells](ShellImage.jpg)
 
