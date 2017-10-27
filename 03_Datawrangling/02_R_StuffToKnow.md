@@ -1,5 +1,13 @@
 # Generally Useful Things To be Aware Of
 
+## get help instantly
+If you need to know something about a function, simply type 2 question marks and the function name, and the available documentation will pop up.  Often, may similarly-named functions will be available for you to choose from.  Select the one from the package you're using.
+
+```{r}
+??file.path
+??dim
+```
+
 ## Quotes and Apostrophes
 They're interchangeable, but must match each other
 ```{r}
