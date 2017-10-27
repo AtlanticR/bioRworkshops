@@ -115,6 +115,108 @@ self_filter()
 
 ```
 
+As a more complex example, let's imagine you want to know where all of the sets were done each year, but are particularly interested in the "Haddock Box".  Without going into the spatial component of what it happening too  much, you might do:
+
+```{r}
+#set up environment
+setwd("/home/mike")
+library(Mar.datawrangling)
+library(rgdal)
+
+#identify spatial data, and prepare it
+clip.poly = "/home/mike/sf_Documents/GIS/PED/haddockBox.shp"
+coastline.poly = "/home/mike/sf_Documents/GIS/BaseData/Coastline/NAtlCoastline_clip.shp"
+theCoastline <- readOGR(dsn =coastline.poly, verbose = FALSE)
+theClip <- readOGR(dsn =clip.poly, verbose = FALSE)
+
+#get the data and apply our desired filters
+get_data('rv')
+GSXTYPE = GSXTYPE[GSXTYPE$XTYPE == 1,]
+GSMISSIONS = GSMISSIONS[GSMISSIONS$YEAR == 2017 & GSMISSIONS$SEASON == "SUMMER",]
+self_filter()
+
+#grab all of the sets prior to filtering just by the "clip.poly"
+allsets = df_to_sp(GSINF)
+
+#filter the remaining data by the clip.poly, and grab the reduced dataset
+GSINF = clip_by_poly(df=GSINF, clip.poly = clip.poly)
+self_filter()
+catch = df_to_sp(clip_by_poly(df=GSINF, clip.poly = clip.poly))
+
+#Plot our results 
+plot(main = "All Sets (2017); Manual", theCoastline, col='green')
+plot(allsets[!(allsets$SETNO %in% catch$SETNO),], col='blue', add=T)
+plot(theClip, add=T)
+plot(catch, col="red", add=T)
+```
+
+That's great, but if we want to do a particular extraction repeatedly (e.g. for each year, for each species...), we can get fancy, and put things in a loop.
+
+```{r}
+setwd("/home/mike")
+library(Mar.datawrangling)
+library(rgdal)
+
+clip.poly = "/home/mike/sf_Documents/GIS/PED/haddockBox.shp"
+coastline.poly = "/home/mike/sf_Documents/GIS/BaseData/Coastline/NAtlCoastline_clip.shp"
+theCoastline <- readOGR(dsn =coastline.poly, verbose = FALSE)
+theClip <- readOGR(dsn =clip.poly, verbose = FALSE)
+
+doByYear<-function(theyear)
+  {
+  get_data('rv')
+  GSXTYPE <<- GSXTYPE[GSXTYPE$XTYPE == 1,]
+  GSMISSIONS <<- GSMISSIONS[GSMISSIONS$YEAR == theyear & GSMISSIONS$SEASON == "SUMMER",]
+  self_filter()
+  allsets = df_to_sp(GSINF)
+  catch <<- df_to_sp(clip_by_poly(df=GSINF, clip.poly = clip.poly))
+  plot(main = paste("Sets (",theyear,"); Function", sep=""), theCoastline, col='green')
+  plot(allsets[!(allsets$SETNO %in% catch$SETNO),], col='blue', add=T)
+  plot(theClip, add=T)
+  plot(catch, col="red", add=T)
+}
+years = c(2014:2017)
+for (i in 1:length(years)) doByYear(years[i])
+```
+For a final example, maybe we want to plot the relative catch weights of the 2017 Summer survey for 3 different species.  This is a bit more complex, but each step is relatively straighforward.
+
+```{r}
+setwd("/home/mike")
+library(Mar.datawrangling)
+library(rgdal)
+library(fields)
+library(akima)
+
+coastline.poly = "/home/mike/sf_Documents/GIS/BaseData/Coastline/NAtlCoastline_clip.shp"
+theCoastline <- readOGR(dsn =coastline.poly, verbose = FALSE)
+
+doBySpp<-function(theSpp)
+  {
+  get_data('rv')
+  GSXTYPE <<- GSXTYPE[GSXTYPE$XTYPE == 1,]
+  GSMISSIONS <<- GSMISSIONS[GSMISSIONS$YEAR == 2017 & GSMISSIONS$SEASON == "SUMMER",]
+  GSSPECIES <<- GSSPECIES[GSSPECIES$COMM ==theSpp,]
+  self_filter()
+  
+  #get the catch data onto the set locations and turn it into spatial data
+  allCatch <- merge(GSINF, GSCAT, all.x=T)
+  allCatch <-  df_to_sp(df_qc_spatial(allCatch))
+  
+  #prepare for a simple interpolation
+  x<-allCatch@data$LONGITUDE
+  y<-allCatch@data$LATITUDE
+  z<-allCatch@data$TOTWGT
+  z[is.na(z)]<-0
+  s=interp(x,y,z, duplicate = "strip")
+  
+  #hideous hack to get the extent correct
+  plot(main = paste("2017 ", theSpp, sep=""), theCoastline, col='white',border='white') 
+  image.plot(s, add=T)
+  plot(theCoastline, col='green', add=T)
+}
+spp = c("GULF STREAM FLOUNDER","REDFISH UNSEPARATED","HALIBUT(ATLANTIC)")
+for (i in 1:length(spp)) doBySpp(spp[i])
+```
 
 ### Reloading the Data
 
