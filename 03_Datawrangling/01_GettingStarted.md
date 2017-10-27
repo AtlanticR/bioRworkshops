@@ -11,7 +11,7 @@ c:\Users\mcmahonm>cd c:\git\AtlanticR
 c:\git\AtlanticR>
 ```
 
-  3.  Go to https://github.com/AtlanticR/bioRworkshops, and click on the link to "Clone of download".  This should give you a slightly odd address (i.e. https://github.com/AtlanticR/bioRworkshops.git).  Copy it to your clipboard.
+  4.  Go to https://github.com/AtlanticR/bioRworkshops, and click on the link to "Clone of download".  This should give you a slightly odd address (i.e. https://github.com/AtlanticR/bioRworkshops.git).  Copy it to your clipboard.
   4. Back in your command window, type the command to clone the workshop.  The following example snippet will copy everything from that repository into the folder you were in  - e.g.
   
   `c:\git\AtlanticR> git clone https://github.com/AtlanticR/bioRworkshops.git`
@@ -36,9 +36,11 @@ If I were to stop right now (with this new folder and my handy file), no one wou
 
 ## Put stuff up onto Github
 
-In R Studio, putting stuff back to a cloned repo is easy.  You just:
+In R Studio, putting stuff back to a cloned repo is easy, as long as you are either owner or a "collaborator".  You just:
   1) Select all of the items that you want to put back
   2) Click "Commit", and at the prompt, type your commit message
   3) Click "Push" (and enter your credentials)
+  
+If you lack the permissions to push changes back, you can always do a "pull request", or "fork" the repository.
 
 That's it!  Now when I go back to https://github.com/AtlanticR/bioRworkshops, I can see my new folder and this handy file.
