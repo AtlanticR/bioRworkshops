@@ -1,0 +1,105 @@
+---
+title: "04 Reading/Plotting/Analysis"
+output: html_notebook
+---
+
+# Creating a data file
+
+We do this only so that we actually have a file to read
+
+```{r}
+data(iris)
+write.csv(file='iris.csv', row.names = FALSE)
+```
+
+
+# Reading data
+
+Read the csv file:
+
+```{r}
+d <- read.csv('iris.csv')
+str(d)
+head(d)
+```
+
+However, we can also read Excel files (xls and xlsx) using the `readxl` package:
+
+```{r}
+library(readxl)
+head(read_xlsx('iris.xlsx'))
+```
+Note than when using `read_xlsx` we get a slightly different kind of data frame -- a "tibble".
+
+The example here is just to see about working with the data, so I'm not going to focus on the xlsx details.
+
+# Working with a data frame
+
+Think of the data frame as the R version of a spreadsheet. We can quickly do some summaries, especially by using the `plot()` command:
+
+```{r}
+plot(d)
+```
+
+By default, plotting a data frame will plot each column against every other column, in a grid. This can be good for getting a good first look at possible relationships, data quality, etc. For example, it looks like in the `iris` dataset that there is a relationship between petal length and petal width.
+
+## Factors
+
+Factors are a special kind of data type for "categorical" data. E.g. in our `iris` example the `read.csv()` function decided that the `Species` column was probably a "factor". Basically, R encodes the column with numeric "identifiers", while keeping track of what each of the identifiers means. This allows us to make summaries based on those factors, such as a boxplot of sepal width separated by species:
+
+```{r}
+boxplot(Sepal.Width ~ Species, data=d)
+```
+
+We can be more specific about what to plot by specifying columns,, e.g.:
+
+```{r}
+plot(d$Petal.Length, d$Petal.Width)
+```
+
+Or, with slightly different syntax (similar to `boxplot()`):
+```{r}
+plot(Petal.Width ~ Petal.Length, data=d)
+```
+
+Or, even use the `with()` function:
+```{r}
+with(d, plot(Petal.Length, Petal.Width))
+```
+
+# Adding columns
+
+Much like in a spreadsheet, we can add columns to our data frame:
+
+```{r}
+d$Petal.Area <- d$Petal.Length * d$Petal.Width
+boxplot(Petal.Area ~ Species, data=d)
+```
+
+# Doing analysis (linear models)
+
+Real analysis comes from working with the data and applying statistical methods. A common task is to fit a linear model (e.g. least squares) to data to quantify relationships. We can do that with the very powerful `lm()` function.
+
+The `lm()` function uses a similar "formula" notation to specify independant and dependent variables to the `boxplot()` and `plot()` functions. We can get a summary of the fit with the generic `summary()` function:
+
+```{r}
+model <- lm(Petal.Width ~ Petal.Length, data=d)
+summary(model)
+```
+
+We can also plot the `model` object:
+```{r}
+par(mfrow=c(2, 2))
+plot(model)
+```
+
+And finally, we can make a plot of our data, and add the relationship to it. We can even use the `model` object to make predictions for values that we have no data for, using the `predict()` generic function:
+
+```{r}
+plot(Petal.Width ~ Petal.Length, data=d)
+abline(model, col='red')
+length <- c(2.2, 2.75)
+width <- predict(model, newdata=list(Petal.Length=length))
+points(length, width, pch=2, cex=2, col='green', lwd=3)
+```
+
