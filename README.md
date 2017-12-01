@@ -18,3 +18,6 @@ A "Noob" workshop, giving many of the details of doing complex data wrangling, g
 
 The basis for the "super noob" workshop, on 2017-11-17 -- reading data (e.g. csv/spreadsheet), working with the data/columns, making plots, and doing some analysis (fitting models)
 
+## 05_plottingBasics
+
+How to make plots using *base* graphics in R (i.e. not `ggplot2`, `lattice`, etc). 
