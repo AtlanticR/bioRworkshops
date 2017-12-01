@@ -93,3 +93,4 @@ sympy-plots-for-*.tex/
 # xindy
 *.xdy
 .Rproj.user
+05_plottingBasics/plottingBasics.html
