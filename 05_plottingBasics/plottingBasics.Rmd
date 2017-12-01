@@ -182,6 +182,24 @@ legend('bottomright',
        title='My awesome legend')
 ```
 
+# Saving plots to a file
+
+To save a plot to a file from a script, I recommend using the functions dedicated to this task, such as: `pdf()`, `png()` etc, rather than by using the RStudio interface to "Export". This is because the plot saving should happen every time the script is run (even if it is run outside of RStudio), so that the code is self-contained and reproducible.
+
+R uses what it calls "devices", and to make a file of a plot we have to "open" a file device (using e.g. `pdf()`), issue the set of commands to make the plot (`plot(...)`, etc), and then "close" the device when we're finished (using the `dev.off()` function). For making say, a pdf file, this would be accomplished like:
+```{r eval=FALSE}
+pdf('plot.pdf')
+plot(x, y)
+dev.off()
+```
+
+If we want to export multiple plots, I recommend using the `pdf()` device, which will automatically add succesive plots as pages in the pdf, or using the `png()` device with a fancy file name, e.g.
+```{r eval=FALSE}
+png('plot-%03d.png')
+plot(x, y)
+dev.off()
+```
+Here the `plot-%03d.png` will create numbered files, starting with `plot-001.png`, then `plot-002.png`, etc.
 
 # Other useful plot types
 
