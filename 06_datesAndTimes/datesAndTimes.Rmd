@@ -1,0 +1,117 @@
+---
+title: "Working with dates and times"
+author: "Clark Richards"
+date: "December 15, 2017"
+output: html_document
+---
+
+As many of us either look directly at data that is a "time series", or generally need to work with dates and times as metadata, it is worth spending a bit of time exploring the classes and methods included in R for handling dates and times in a convenient way.
+
+# Date/Time classes
+
+As with many aspects or R, there is often more than one way of doing things. There are also a number of packages that extend the basic date/time functionality beyond that provided in base R. In particular, the [`lubridate`](https://cran.r-project.org/web/packages/lubridate/index.html) has a lot of convenience functions for interpreting dates and times and converting between different formats. Also, the [`nanotime`](https://cran.r-project.org/web/packages/nanotime/index.html) package is useful for people working with dates/times that have subsecond resolution.
+
+## The R `Date` and `POSIX` classes
+
+The main classes used in base R for working with dates and times are the `Date` and `POSIX` classes. To read more about them from the included help, do:
+```{r eval=FALSE}
+?Date
+?POSIXct
+```
+at the prompt.
+
+While the two classes are similar, I recommend focusing only on the `POSIXct` class, as it is more flexible and is consistent with the [POSIX](https://en.wikipedia.org/wiki/POSIX) standards defined for maintaining compatibility between various different computer operating systems.
+
+## The `POSIXct`/`POSIXlt` class
+
+Technically, a `POSIXct` object is stored as: **the number of seconds since the beginning of 1970 (in the UTC time zone)**, and is therefore at its core a numeric vector.
+
+However, there are a range of methods for recognizing POSIX objects, including `print()`, `plot()`, `diff()`, and others. Importantly, a POSIX class object stores not only the time information (i.e. the number of seconds since 1970-01-01 00:00:00) but also the **time zone** of the date. For example, if we use the `Sys.time()` function to get the current time from our computer, we get:
+```{r}
+today <- Sys.time()
+today
+```
+
+Note that the timezone reads "AST", because that is the timezone set on the computer. It is also the *default* time zone used when converting characters or numbers to POSIX objects if the `tz=` argument is not specified, e.g.
+```{r}
+workshop_time <- as.POSIXct("2017-12-15 12:00:00")
+workshop_time
+```
+vs
+```{r}
+workshop_time_UTC <- as.POSIXct("2017-12-15 12:00:00", tz="UTC")
+workshop_time_UTC
+```
+
+We can see the UTC/AST difference by directly comparing the objects:
+```{r}
+workshop_time_UTC - workshop_time
+```
+
+We can change timezones by casting the POSIX object as a `character`, using `format()`, and then converting it to POSix with the correct time zone:
+```{r}
+as.POSIXct(format(workshop_time), origin='1970-01-01', tz='UTC') == workshop_time_UTC
+```
+(or use the `with_tz()` function from lubridate).
+
+**ADVICE:** Where possible, start using UTC for all date/time objects right from the data reading stage. The time zone handling and conversion functions can be convenient when needed, but they can also be confusing -- e.g. if you use a "local" timezone, such as AST, which is only valid for half the year and then will switch to ADT when on daylight time.
+
+# Working with dates/times
+
+## Reading dates
+
+Many sources of data will contain dates and times as characters, along the lines of `2017-01-10`, or `Jan 10 2017`. The `format=` argument of the `as.POSIXct()` function is your friend for converting such characters to valid POSIX times (also, the variants of the pre-made functions in lubridate).
+
+To see all the `format=` options, see the help for the function `strptime()`. Below is a cut/paste of the first few format strings:
+```
+%a
+Abbreviated weekday name in the current locale on this platform. (Also matches full name on input: in some locales there are no abbreviations of names.)
+
+%A
+Full weekday name in the current locale. (Also matches abbreviated name on input.)
+
+%b
+Abbreviated month name in the current locale on this platform. (Also matches full name on input: in some locales there are no abbreviations of names.)
+
+%B
+Full month name in the current locale. (Also matches abbreviated name on input.)
+```
+
+So, to convert `2017-01-10 12:00:00` to a POSIX object, we can do:
+```{r}
+as.POSIXct("2017-01-10 12:00:00", tz="UTC") # use UTC!
+```
+
+If the date was given in a different format, say, "12:00:00 Jan 10 2017", we build up a format string from the individual bits:
+```{r}
+as.POSIXct("12:00:00 Jan 10 2017", format="%H:%M:%S %b %d %Y", tz="UTC")
+```
+
+## Making plots
+
+A nice thing about POSIX objects is that they are recognized by the generic `plot()` function, so that if you want to make a time series plot, a character representation of the dates is automatically used. Let's make a simple example. Note because POSIX are actually just the number of seconds, we can make *new* POSIX objects by adding numeric objects to a POSIX one:
+```{r}
+starttime <- as.POSIXct('2017-12-15 12:00:00', tz='UTC')
+
+## Make a sequence of times that increment by one second, for total length of an hour
+time <- starttime + seq(from=0, to=3600, by=1)
+
+## make a random variable with the same length as `time`
+y <- rnorm(time)
+
+plot(time, y)
+```
+
+See the nicely formatted x-axis? The only complaint I have is that while it nicely formats the times, there is no indication of the date. One fix would be to add it to the margins or title:
+```{r}
+plot(time, y)
+title(paste("Start", starttime))
+```
+
+
+For more control over axes when doing time series plot, I recommend you check out the `oce.plot.ts()` function in the `oce` package. Because we use times series a lot, we have a few tweaks that make interpreting time series plots a bit easier:
+```{r}
+library(oce)
+oce.plot.ts(time, y)
+```
+
