@@ -94,3 +94,6 @@ sympy-plots-for-*.tex/
 *.xdy
 .Rproj.user
 05_plottingBasics/plottingBasics.html
+
+.Rhistory
+.RData
