@@ -1,0 +1,52 @@
+---
+title: "R Noob Group"
+author: "Clark Richards"
+date: "February 8, 2019"
+output: html_document
+---
+
+The purpose of this document is to capture the various things that the participants of the newly-restarted DFO "R noob" group would like to cover over the course of the next few months. This was accomplished by an informal introdution of all those in attendance (approximately 30), highlighting how they use (or not) R, and what they would like to get out such a workshop.
+
+The section below outlines a rough list taken on the fly during the introductions. `-` marks at the end of lines, indicate multiple people who mentioned the topic.
+
+# What people in the group are doing/want:
+
+* GIS/spatial analysis ----
+* R programming basics ---
+* Simple reporting (figures/tables, stats)
+* Rstudio/data wrangling
+* Avoiding Excel (pivot tables)
+* Data management/manipulation
+* plotting/ggplot
+* Organization!? Projects, etc ---
+* Assessments (migrated from Excel, for automation)
+* ACON spatial analysis; reproducing
+* dplyr/tidyverse/ggplot
+* Github/Git
+* Markdown
+* Functional programming
+* Loops
+* Interpreting other peoples' code
+* Transition from Matlab
+* Working with "large" data sets (not just discrete)
+* troubleshooting/debugging
+* 
+
+# Potential topics
+
+The introduction above led to a brief discussion about potential topics for the course of this workshop, as follows:
+
+* Organization and RStudio
+* Rbasics
+* plotting
+* basic data analysis
+   * reading data (excel)
+   * csv, tsv, ODF, netCDF, YADF
+   * data QA/QC
+   * simple statistics
+   * fitting models
+* Reports/Rmarkdown
+* Shiny/interactive apps
+
+
+There was an overwhelming interest among the group, that before we get too deep into the details of R, that it would be useful to go over the various ways of organization, how to work with R/RStudio (i.e. projects), different ways of running R, etc. 
