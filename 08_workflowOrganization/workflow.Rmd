@@ -13,3 +13,117 @@ The goal of this workshop is to go over a number of "best practices" for organiz
 * organization of data/scripts/documents (e.g. to be able to find things again)
 
 * avoiding pitfalls that affect results
+
+# Basic advice:
+
+## Save the source!
+
+Your source code (scripts, Rmd, etc) should be the only thing needed (beyond data, obvs) to reproduce an analysis, figure, data product, etc. That means that anything that isn't created *within your code* is DANGEROUS because you may not have it later, and certainly someone else trying to run your code won't have it. Some advice:
+
+1. Never save your workspace. It can leave undesirables behind, that may get automatically loaded the next time you restart R.
+
+   ![RStudio options](rstudio-workspace.png)
+
+2. Restart R often! 
+
+3. Break up analysis that takes a long time to run into individual pieces, that save intermediate steps. So, if it takes 1 minute to load a large data set, but only 1 second to run the analysis, write a standalone script that loads the data (e.g. from a csv or something) and saves it into a binary "RData" file -- which will load much more quickly.
+
+   Then, you only have to run the "data" code when the data changes, but otherwise you don't have to wait 1 minute everytime you want to see the output of your analysis.
+   
+4. Automation. I won't get into this too much here, but personally I think that automation tools such as GNU Makefiles are incredibly useful for running complicated projects. Maybe a future seminar?
+
+## Be organized! 
+
+It's tempting to dump every R script you've ever written, or received, into one big folder called `R/`, but when it comes time to run something again, or find a piece of code that you want to re-use, it quickly becomes a nightmare of a folder. Divide your work into "projects" (more about this later), and keep each project separate by using a directory structure that allows for organization. For example:
+```
+myHomeFolder/ -- Rprojects/ |_ fisheriesAnalysis/
+                            |_ ADCP_processing/
+                            |_ sandbox/
+                            |_ Rworkshops/
+                            |_ CSAS_2019/
+                            |_ tetris_in_R/
+```
+Then, within each of the project folders, try to choose a structure that makes sense for keeping things like scripts, data, and documents separate, e.g.:
+```
+fisheriesAnalysis/ |_ data/
+                   |_ documents/
+                   |_ src/
+                   |_ misc/
+```
+
+If the project has a lot of code, you can further organize within the `src/` folder:
+```
+src/ -- 01_read_data/ |_______ 01_read_data_csv.R
+     |                |_______ 02_process_data.R
+     |                |_______ 03_summary.R
+     |
+     |_ 02_trial_analysis/ |_ 01_byLatitude.R
+     |                     |_ 02_byLongitude.R
+     |                     |_ 03_whoReallyCaresAboutFishAnyway.R
+     |                     |_ 04_kMeans.R
+     |
+     |_ 03_final_analysis/ |_ 01_IGiveUp.R
+     |
+     |_ 04_summary_report/ |_ ProjectReport.Rmd
+```
+
+## Use RStudio projects
+
+The Rstudio "project" is a way of keeping a particular group of source files organized within RStudio, with some advantages. If you have already started by practising the above "directory organization", this is an easy next step. Advantages:
+
+1. Allows you to organize your RStudio session according to the project you are working on -- including having separate instances for differenct projects (so you don't have a ton of unrelated tabs open at once).
+
+2. Gateway into use other organization tools within RStudio, such as Git
+
+3. For package development, allows for seamless and easy package building, checking, and installing
+
+## File paths
+
+**NEVER** use `setwd()` inside of a script. Or if you do, recognize that you're doing something horrible, that you'll hate yourself for later, but worse everyone else who ever tries to run your code will *despise* you for eternity. There is nothing worse than trying to run a script that has:
+
+```{r eval=FALSE}
+setwd("C:\Users and Documents\Windows crazy file path\that has spaces\my Account\My documents\R stuff")
+```
+  
+If you use a project-oriented workflow (e.g. above), you can use *relative* paths for everything you need. So the working directory should be the directory that your script is in, and you can load/write other files relative to that, e.g.
+
+```{r eval=FALSE}
+data <- read.csv('../data/datafile.csv')
+
+pdf('../figs/myplot.pdf')
+plot(data)
+dev.off()
+```
+
+## Example for today
+
+We have a (largeish) csv that we can use to play around a little bit. The "on screen" example will go through the kinds of steps that we would take, upon receiving that file, to start an organized project and show some of the things that we might do in it.
+
+Here, I'm just going to explore the data a little
+
+```{r}
+d <- read.csv('RV2010_2018.csv', stringsAsFactors = FALSE)
+
+with(d, plot(LONGITUDE, LATITUDE))
+```
+
+
+```{r}
+library(oce) # for the colormap function, and some map stuff
+library(ocedata) # for coastlineWorldFine
+with(d, plot(LONGITUDE, LATITUDE, col=colormap(BOTTOM_TEMPERATURE)$zcol))
+```
+
+```{r}
+with(d, hist(BOTTOM_TEMPERATURE))
+```
+
+```{r}
+ds <- subset(d, BOTTOM_TEMPERATURE > 8)
+with(d, plot(LONGITUDE, LATITUDE, col='lightgrey', pch=19))
+with(ds, points(LONGITUDE, LATITUDE, pch=19, cex=0.5))
+title('Bottom T > 8')
+data("coastlineWorldFine") # from the ocedata package
+lines(coastlineWorldFine[['longitude']], coastlineWorldFine[['latitude']])
+```
+
