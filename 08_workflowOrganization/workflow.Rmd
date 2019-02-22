@@ -1,0 +1,15 @@
+---
+title: "R Noob workshop: Workflow organization"
+author: "Clark Richards"
+date: "2019-02-22"
+output: html_notebook
+---
+
+
+The goal of this workshop is to go over a number of "best practices" for organizing R "projects", and workflows. The reasons for doing this are plenty:
+
+* reproducibility: both between different collaborators, and with yourself when you try and re-run code at a later time (maybe after switching computers, etc)
+
+* organization of data/scripts/documents (e.g. to be able to find things again)
+
+* avoiding pitfalls that affect results
