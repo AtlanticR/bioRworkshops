@@ -126,4 +126,3 @@ title('Bottom T > 8')
 data("coastlineWorldFine") # from the ocedata package
 lines(coastlineWorldFine[['longitude']], coastlineWorldFine[['latitude']])
 ```
-

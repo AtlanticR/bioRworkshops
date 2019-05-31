@@ -1,0 +1,205 @@
+---
+title: "Introduction to ocean data analysis with R and the oce package"
+author: Clark Richards
+date: 2019-05-24
+output: html_notebook
+---
+
+So far, we've learned the basics of how to install and use R/RStudio, how to organize scripts/data/projects into folders and use RStudio projects, and have begun the basics of how to work with a few different types of R objects, functions, and operations.
+
+This lesson will go over some of the basics of doing *oceanographic* data analysis with R, including reading some real data files, performing some common operations on the data, and finally getting started with the [`oce`](https://CRAN.R-project.org/package=oce) package.
+
+The two datasets that we'll use for this workshop come from the files `RV2010_2018.csv` and `32H120030721.exc.csv`. The former is a subet of the data from trawl surveys between 2010 and 2018, and the latter is a csv file containing water sampling data from a cruise in Baffin Bay.
+
+## oce basics
+
+The `oce`
+
+## RV data
+
+The data file is a simple comma-separate-value (csv) file with named columns and rows for each observation. The simplest way to get it into R is to use the `read.csv()` function:
+
+```{r}
+rv <- read.csv('RV2010_2018.csv', stringsAsFactors = FALSE)
+str(rv)
+```
+
+
+This is a classic example of a `data.frame` object, which can be used to hold data where there are the same number of observations (rows) for every parameter (columns). Recall that to access specific fields within the object, we use the `$` notation, e.g.
+
+```{r}
+summary(rv$SURFACE_TEMPERATURE)
+```
+
+There is a handy function for working with data frames, `with()`, which allows you to access all of the fields in a data frame without having to keep retyping the `rv$` part (ok if you're lazy about object names like me, but if you were more rigorous and gave it a descriptive name like `rv_trawl_data` typing that over and over would get old fast).
+
+We can make a crude map of the data using the `LONGITUDE` and `LATITUDE` fields like:
+
+```{r}
+with(rv, plot(LONGITUDE, LATITUDE))
+```
+
+Hmm ... that's a familiar looking shape, but with context I just can't figure out where it is.
+
+Thankfully, the `oce` and `ocedata` packages can help us out here:
+
+```{r}
+library(oce)
+library(ocedata)
+
+data("coastlineWorld")
+data("coastlineWorldFine")
+plot(coastlineWorld)
+```
+
+We don't want a plot of the entire world, so we'll just add the coastline object as `lines()` onto the existing scatterplot:
+
+```{r}
+with(rv, plot(LONGITUDE, LATITUDE))
+lines(coastlineWorldFine[['longitude']], coastlineWorldFine[['latitude']])
+pl <- recordPlot()
+```
+
+We can also colour the points to represent something interesting. There are lots of ways to do this, but a good one (biased, I know) is to use the `colormap()` function from `oce`. Let's color for bottom temperature:
+
+```{r}
+cm <- colormap(rv$BOTTOM_TEMPERATURE, col=oceColorsTemperature)
+```
+
+The above command returns an object, of class `colormap`, that contains information about how to apply colors when plotting. to color a series of points, the useful return is the `zcol` value, which specifies a color (based on the chosen colormap) for each individual point in the series:
+
+```{r}
+str(cm)
+```
+
+So that we know how to interpret the colours, we first draw a "palette" using the `drawPalette()` function. We can also change the plotting character (`pch`) and size (`cex`) to clean up the overlap:
+
+```{r}
+drawPalette(colormap=cm, zlab='Bottom Temperature [degC]')
+with(rv, plot(LONGITUDE, LATITUDE, col=cm$zcol, pch=19, cex=0.5))
+lines(coastlineWorldFine[['longitude']], coastlineWorldFine[['latitude']])
+```
+
+We can also look at the statistical distribution of temperature:
+
+```{r}
+hist(rv$BOTTOM_TEMPERATURE)
+abline(v=mean(rv$BOTTOM_TEMPERATURE, na.rm=TRUE), lwd=3)    # note the na.rm=TRUE
+```
+
+
+Just for fun, let's plot the locations of bottom temperatures are are above/below the mean value:
+
+```{r}
+mean_bt <- mean(rv$BOTTOM_TEMPERATURE, na.rm=TRUE)
+plot(coastlineWorldFine, clongitude=mean(rv$LONGITUDE), clatitude=mean(rv$LATITUDE),
+     span=1000)
+with(rv[rv$BOTTOM_TEMPERATURE < mean_bt,], points(LONGITUDE, LATITUDE, pch=19, cex=0.5, col='blue'))
+with(rv[rv$BOTTOM_TEMPERATURE >= mean_bt,], points(LONGITUDE, LATITUDE, pch=19, cex=0.5, col='red'))
+legend('bottomright', c('Colder', 'Warmer'), pch=19, col=c('blue', 'red'))
+```
+
+What if we want the data interpolated onto a regular grid? There are a few options:
+
+1. use the `interp.surface()` from the `fields` package
+
+2. use the `binMean2D()` function from `oce` (again, I'm biased, though as with all data analysis decisions the approach you use should be chosen based on the desired strategy).
+
+The `binMean2D()` function will count up all the observations that lie within a "bin", defined as a regular grid.
+
+```{r}
+lon <- seq(min(rv$LONGITUDE), max(rv$LONGITUDE), length.out=100)
+lat <- seq(min(rv$LATITUDE), max(rv$LATITUDE), length.out=100)
+b <- binMean2D(rv$LONGITUDE, rv$LATITUDE, rv$BOTTOM_TEMPERATURE, lon, lat)
+str(b)
+```
+
+And we can make a nice plot using the `imagep()` (i.e. image with a palette) function from `oce`:
+
+```{r}
+imagep(b$xmids, b$ymids, b$result)
+lines(coastlineWorldFine[['longitude']], coastlineWorldFine[['latitude']])
+```
+
+There are lots of "gaps", so maybe we want a grid that isn't quite that fine (adjust the `length.out` argument in `seq()`)
+
+```{r}
+lon <- seq(min(rv$LONGITUDE), max(rv$LONGITUDE), length.out=50)
+lat <- seq(min(rv$LATITUDE), max(rv$LATITUDE), length.out=50)
+b <- binMean2D(rv$LONGITUDE, rv$LATITUDE, rv$BOTTOM_TEMPERATURE, lon, lat)
+imagep(b$xmids, b$ymids, b$result)
+lines(coastlineWorldFine[['longitude']], coastlineWorldFine[['latitude']])
+```
+
+
+## Ship survey data
+
+Kumiko provided a sample file, as a csv, that appears to represent CTD/rosette survey data from a cruise, in the file `32H120030721.exc.csv`. A quick look at the actual file shows that it has lots of "header" information (metadata), followed by the CSV portion that contains the actual data.
+
+Figuring out how to read the file, and turn it into an `oce` object would be a pretty informative exercise. But a good thing to always check first is if `oce` already recognizes the file:
+
+```{r}
+oceMagic('32H120030721.exc.csv')
+```
+
+It seems to. In fact, the file is formatted as a standard WOCE/WHP program "bottle" file, which `oce` can interpret by calling the `read.section()` function.
+
+Note that it is almost always better when working with oce to use the `read.oce()` function, as it should detect what kind of file it is, and then call the correct `read*()` function as appropriate.
+
+```{r}
+sec <- read.oce('32H120030721.exc.csv')
+summary(sec)
+```
+
+This produces an object of class `section` in the `oce` package. Essentially, a `section` object is just a collection of `ctd` objects, but with a common metadata and some specific methods for plotting/summarizing them.
+
+We can make a basic summary plot with
+
+```{r}
+plot(sec)
+```
+
+which looks like a bit of a mess, because of how the default x-axis for the section plots is done with `distance` (from the first station). Let's just plot the map
+
+```{r}
+plot(sec, which='map')
+```
+
+Remembering that a `section` object is just a collection of `ctd` objects, we can plot individual stations by using the syntax `sec[['station', 1]]`, e.g. to plot the first:
+
+```{r}
+plot(sec[['station', 1]])
+```
+
+This file appears to have a number of different transects all put together -- 2 across Baffin Bay and 4 across Nares Strait. It makes sense to split the single section up into a few different ones, so they can be worked with separately.
+
+```{r}
+plot(subset(sec, stationId %in% sec[['stationId']][1:15]), which='map')
+```
+
+```{r}
+sec1 <- subset(sec, latitude < 72.9)
+sec2 <- subset(sec, latitude > 72.9 & latitude < 77)
+sec3 <- subset(sec, latitude > 77 & latitude < 79)
+sec4 <- subset(sec, latitude > 79 & latitude < 80.8)
+sec5 <- subset(sec, latitude > 80.8 & latitude < 81.6)
+sec6 <- subset(sec, latitude > 81.6)
+```
+
+```{r}
+for (i in 1:6) {
+    eval(parse(text=paste0('plot(sec', i, ')')))
+}
+```
+
+We can also use the `section` plotting method to make some "pretty" colored plots of the data, including some of the other fields that were read from the file (i.e. the chemical data):
+
+```{r}
+plot(sec2, which='silicate', ztype='image')
+```
+
+
+## Data quality flags
+
+
+One of the great things about using a data format like the WHP bottle data (and reading it in oce), is that oce recognizes most of the metadata in the file, including the data quality flags.

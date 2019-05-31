@@ -1,0 +1,94 @@
+---
+title: "Working with ocean data"
+date: "2019-05-24"
+author: "Clark Richards"
+output: html_notebook
+---
+
+The `oce` package 
+
+https://cran.rstudio.com/web/packages/oce/vignettes/oce.html
+
+## RV data
+
+```{r}
+rv <- read.csv('RV2010_2018.csv', stringsAsFactors = FALSE)
+str(rv)
+```
+
+```{r}
+plot(rv$LONGITUDE, rv$LATITUDE)
+with(rv, {plot(LONGITUDE, LATITUDE)})
+```
+But where is this???
+
+```{r}
+library(ocedata)
+data("coastlineWorldFine")
+
+plot(rv$LONGITUDE, rv$LATITUDE)
+lines(coastlineWorldFine[['longitude']], coastlineWorldFine[['latitude']])
+```
+
+```{r}
+hist(rv$BOTTOM_TEMPERATURE)
+```
+
+```{r}
+cm <- colormap(rv$BOTTOM_TEMPERATURE)
+drawPalette(colormap=cm, cex.axis=0.5)
+plot(rv$LONGITUDE, rv$LATITUDE, col=cm$zcol)
+```
+
+```{r}
+rv_sub <- rv[rv$BOTTOM_TEMPERATURE > 9, ]
+plot(rv_sub$LONGITUDE, rv_sub$LATITUDE)
+```
+
+## Section data
+
+```{r}
+sec <- read.oce('32H120030721.exc.csv')
+summary(sec)
+```
+
+```{r}
+plot(sec)
+```
+```{r}
+plot(sec, which='temperature')
+```
+
+```{r}
+plot(sec, which='map')
+```
+
+```{r}
+sec_sub <- subset(sec, latitude < 77)
+plot(sec_sub, which='map')
+```
+```{r}
+plot(sec_sub, which='silicate', xtype='latitude')
+```
+
+```{r}
+plot(sec_sub, which='silicate', xtype='latitude', ztype='image')
+```
+
+```{r}
+data(ctd)
+plot(ctd)
+```
+
+```{r}
+plot(sec[['station', 1]])
+```
+
+```{r}
+plot(sec[['salinity']], sec[['silicate']])
+```
+
+```{r}
+plotTS(sec)
+```
+
