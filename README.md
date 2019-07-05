@@ -21,3 +21,23 @@ The basis for the "super noob" workshop, on 2017-11-17 -- reading data (e.g. csv
 ## 05_plottingBasics
 
 How to make plots using *base* graphics in R (i.e. not `ggplot2`, `lattice`, etc). 
+
+## 06_datesAndTimes
+
+Dealing with dates and times (yay, POSIX!) in R
+
+## 07_groupReinvigoration
+
+The R noob group has been re-kicked off, starting in 2019! Look at all the fun topics we can cover!
+
+## 08_workflowOrganization
+
+How to organize your work, use RStudio projects, etc
+
+## 09_intro_ocean_data
+
+Some basics of the Rstats `oce` package for analyzing *real* ocean data
+
+## 10_using_git
+
+A re-visit of the crowd-pleaser, Git! Essential for anyone who bashes on keyboards.
