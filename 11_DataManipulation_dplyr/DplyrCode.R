@@ -14,9 +14,8 @@
 library(dplyr)
 library(Mar.datawrangling)
 
-
 ## load map function ----------
-source("makemap.R")
+source("11_DataManipulation_dplyr/makemap.R")
 
 ## load data ----------
 get_data('rv') #this will look in the data folder
@@ -26,11 +25,10 @@ rvdata <- summarize_catches()
 ## load mapping function ----
 source("makemap.R")
 
-## glimpse ----------
+## glimpse ---------- inspect data
 glimpse(rvdata) #similar to str(rvdata)
 
-  ## 16 columns of data. Let's focus on a few of them
-
+ 
 ## select ------------ select specific columns
 
 head(select(rvdata,SETNO,YEAR,LATITUDE,LONGITUDE,TOTWGT,COMM)) #notice how the data is moved through this with pipes pathway
@@ -170,13 +168,14 @@ diversity <- rvdata%>%
              summarise(abundance = sum(TOTNO),
                        div = n(),
                        ldiversity = log10(div))%>%
-             ungroup()%>%
-             group_by(YEAR,MISSION)%>%
+             ungroup()%>% #ungroup because we want the proportion to be within YEAR and not set. 
+             group_by(YEAR,MISSION)%>% #regroup
              mutate(pdiv=div/max(div,na.rm=T))%>%
              ungroup()%>%
-             right_join(.,rvdata%>%select(ends_with("UDE"),MISSION,SETNO,YEAR),by=c("MISSION","SETNO","YEAR"))%>%
+             right_join(.,rvdata%>%select(ends_with("UDE"),MISSION,SETNO,YEAR),by=c("MISSION","SETNO","YEAR"))%>% #merge back in the coordinates so we can plot
              data.frame()
-                                                                                       
+            
+#make a basic map of data from 2015:2018 of proportional fish and invertebrate diversity                                                                            
 makemap(diversity%>%filter(between(YEAR,2015,2018),!is.na(pdiv))%>%dplyr::select(LONGITUDE,LATITUDE,pdiv))
 
 
