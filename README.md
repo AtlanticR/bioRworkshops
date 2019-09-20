@@ -41,3 +41,7 @@ Some basics of the Rstats `oce` package for analyzing *real* ocean data
 ## 10_using_git
 
 A re-visit of the crowd-pleaser, Git! Essential for anyone who bashes on keyboards.
+
+## 11_DataManipulation_dplyr
+
+Introduction to the grammar of data manipulation using `dplyr`. Test application with the rvdata. 
