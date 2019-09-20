@@ -166,7 +166,7 @@ diversity <- rvdata%>%
              filter(XTYPE==1)%>%
              group_by(YEAR,MISSION,SETNO)%>%
              summarise(abundance = sum(TOTNO),
-                       div = n(),
+                       div = n(), # n() is a handy dplyr function that returns the length of the data. Similar to nrow(data.frame) or length(vector)
                        ldiversity = log10(div))%>%
              ungroup()%>% #ungroup because we want the proportion to be within YEAR and not set. 
              group_by(YEAR,MISSION)%>% #regroup
