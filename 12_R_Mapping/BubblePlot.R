@@ -33,7 +33,7 @@ spPlot_bubble <- function(xyz,NAFO=NULL,binning = c(0,10,50,100),depth=-200,size
   if(length(xyz)==2){colnames(xyz) <- c("x","y")} else if (length(xyz)==3){colnames(xyz) <- c("x","y","z")} else if (length(xyz)==4){colnames(xyz) <- c("x","y","z","YEAR")} else print("You have more than four columns, this function only accepts data frams with 2-4 columns")
   
   #Map data for ggplot
-  if(is.null(NAFO)){NAFODivisions <- readOGR("NAFO_Divisions/Divisions.shp")}
+  if(is.null(NAFO)){NAFODivisions <- readOGR("data/NAFO_Divisions/Divisions.shp")}
   if(!is.null(NAFO)){NAFODivisions <- readOGR(NAFO)}
   
   #set to common projection
