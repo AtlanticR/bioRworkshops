@@ -54,10 +54,9 @@ spPlot_bubble <- function(xyz,NAFO=NULL,binning = c(0,10,50,100),depth=-200,size
   labels=c("0",labels)
   if(is.null(sizes)){sizes<- 0.3}
   plotsizes <- rep(0.3,length(breaks))
-  plotcols <- c("black",
-                paste0("grey",rev(seq(from=40,to=100,length.out = length(labels)-1)[1:(length(labels)-2)])),
-                "black")
-  
+  plotcols <- c("grey80",rep("black",4))
+  #paste0("grey",rev(seq(from=40,to=100,length.out = length(labels)-1)[1:(length(labels)-2)])),
+
   for(i in labels[2:length(labels)]){
     
     sizes <- c(sizes,sizes[length(sizes)]+0.5) 
@@ -103,16 +102,16 @@ spPlot_bubble <- function(xyz,NAFO=NULL,binning = c(0,10,50,100),depth=-200,size
   #Make the plot
   if(is.null(facet)){
     p1 <- ggplot() +
-      geom_point(data=xyz%>%arrange(breaks),aes(x=x,y=y,size=breaks,col=breaks,shape=breaks),alpha=apBubble)+
+      geom_polygon(data=FortNAFO,
+                   aes(long, lat, group = group),lwd=0.5,fill="white",col="black")+
       geom_polygon(data = usa, 
                    aes(x=long, y = lat, group = group), 
                    fill = "white", 
                    color="black") +
       geom_polygon(data = canada, aes(x=long, y = lat, group = group), 
                    fill = "white", color="black") + 
-      geom_polygon(data=FortNAFO,
-                   aes(long, lat, group = group),lwd=1,fill="white",col="black")+
-      geom_contour(data=bathy,aes(x=x,y=y,z=z),breaks=c(depth),lwd=0.05,colour="grey20")+
+      geom_contour(data=bathy,aes(x=x,y=y,z=z),breaks=c(depth),lwd=0.05,colour="deepskyblue")+     
+      geom_point(data=xyz%>%arrange(breaks),aes(x=x,y=y,size=breaks,col=breaks,shape=breaks),alpha=apBubble)+
       scale_size_manual(values=sizes*sizeoffset)+
       scale_colour_manual(values=plotcols)+
       scale_shape_manual(values=c(20,19,19,19,19))+
@@ -154,7 +153,8 @@ spPlot_bubble <- function(xyz,NAFO=NULL,binning = c(0,10,50,100),depth=-200,size
     # canada <- canada[!is.na(ind_canada),]
     
     p1 <- ggplot() +
-      geom_point(data=xyz%>%arrange(breaks),aes(x=x,y=y,col=breaks,shape=breaks,size=breaks),alpha=apBubble)+
+      geom_polygon(data=FortNAFO,
+                   aes(long, lat, group = group),fill=NA,lwd=0.5,col="black")+
       #geom_point(data=dplyr::filter(xyz,breaks!="0"),aes(x=x,y=y,col=breaks,shape=breaks),pch=19)+
       geom_polygon(data = usa, 
                    aes(x=long, y = lat, group = group), 
@@ -162,9 +162,8 @@ spPlot_bubble <- function(xyz,NAFO=NULL,binning = c(0,10,50,100),depth=-200,size
                    color="black") +
       geom_polygon(data = canada, aes(x=long, y = lat, group = group), 
                    fill = "white", color="black") + 
-      geom_polygon(data=FortNAFO,
-                   aes(long, lat, group = group),fill=NA,lwd=1,col="black")+
-      geom_contour(data=bathy,aes(x=x,y=y,z=z),breaks=c(depth),lwd=0.05,colour="grey20")+
+      geom_contour(data=bathy,aes(x=x,y=y,z=z),breaks=c(depth),lwd=0.05,colour="deepskyblue")+
+      geom_point(data=xyz%>%arrange(breaks),aes(x=x,y=y,col=breaks,shape=breaks,size=breaks),alpha=apBubble)+
       scale_size_manual(values=sizes*sizeoffset)+
       scale_colour_manual(values=plotcols)+
       scale_shape_manual(values=c(20,19,19,19,19))+
