@@ -45,3 +45,7 @@ A re-visit of the crowd-pleaser, Git! Essential for anyone who bashes on keyboar
 ## 11_DataManipulation_dplyr
 
 Introduction to the grammar of data manipulation using `dplyr`. Test application with the rvdata. 
+
+## 12_R_Mapping
+
+Introduction to mapping in R. 
