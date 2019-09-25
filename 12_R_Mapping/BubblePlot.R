@@ -1,11 +1,11 @@
 spPlot_bubble <- function(xyz,NAFO=NULL,binning = c(0,10,50,100),depth=-200,sizes=NULL,facet=NULL,bathy=NULL,
-                          extended=FALSE,facetorder=NULL,sizeoffset=2.5,apBubble=1) {
+                          extended=FALSE,facetorder=NULL,sizeoffset=1.25,apBubble=1) {
   
   #Plot returns a ggplot object
   #xyz - is the dataframe of interest
   #poly - is a full file path for a shape file the area of interest (default is the shape file for the Fundian in the data/ folder)
   #NAFO - is a full file path for a shape file for the planning region where the data will be gridded. (default is the shape file for the Maritimes Planning region in the data/ folder)
-  #facet - variable to facet the data by (this is a grouping variable) (default is NULL, otherwise should be YEAR, BIANNUAL, or DECADAL). 
+  #facet - variable to facet the data by (this is a grouping variable) (default is NULL). 
   #depth - the depth expressed as a negative value for the contour line(s) you wish to plot. Defaults to -200
   #bathy - bathyobject from MARMAP -- if null one will be downloaded to the working directory
   #variable - is the value from the survey (e.g., Total Weight) to be included as a legend title
@@ -30,7 +30,7 @@ spPlot_bubble <- function(xyz,NAFO=NULL,binning = c(0,10,50,100),depth=-200,size
   if(sign(xyz[1,2])<0 & length(xyz)==3){xyz <- xyz[,c(2,1,3)]}
   if(sign(xyz[1,2])<0 & length(xyz)==4){xyz <- xyz[,c(2,1,3,4)]}
   
-  if(length(xyz)==2){colnames(xyz) <- c("x","y")} else if (length(xyz)==3){colnames(xyz) <- c("x","y","z")} else if (length(xyz)==4){colnames(xyz) <- c("x","y","z","YEAR")} else print("You have more than four columns, this function only accepts data frams with 2-4 columns")
+  if(length(xyz)==2){colnames(xyz) <- c("x","y")} else if (length(xyz)==3){colnames(xyz) <- c("x","y","z")} else if (length(xyz)==4){colnames(xyz) <- c("x","y","z","YEAR")} else print("You have more than four columns, this function only accepts dataframes with 2-4 columns")
   
   #Map data for ggplot
   if(is.null(NAFO)){NAFODivisions <- readOGR("data/NAFO_Divisions/Divisions.shp")}
@@ -46,6 +46,7 @@ spPlot_bubble <- function(xyz,NAFO=NULL,binning = c(0,10,50,100),depth=-200,size
     labels <- c(labels,paste(binning[i],binning[i+1],sep="-"))
     
   }
+  labels[1]<-gsub("0-","1-",labels[1])
   
   labels <- c(labels,paste0(max(binning),"+"))
   breaks <- as.character(cut(xyz[,3],c(binning,max(xyz[,3],na.rm=T)),labels=labels))
@@ -177,7 +178,7 @@ spPlot_bubble <- function(xyz,NAFO=NULL,binning = c(0,10,50,100),depth=-200,size
             strip.background = element_rect(colour = "black", fill = "white"))+
       labs(x=expression(paste("Longitude ",degree,"W",sep="")),
            y=expression(paste("Latitude ",degree,"N",sep="")))+
-      facet_wrap(~YEAR)
+      facet_wrap(~f)
     
     
   } 
