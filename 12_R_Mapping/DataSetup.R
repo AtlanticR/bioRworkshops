@@ -2,7 +2,7 @@
 library(dplyr)
 
 ## load data --------
-rvdata <- read.csv("R:/Shared/R Noobs/RV2010_2018.csv")
+rvdata <- data <- read.csv(unz("data/RV2010_2018.zip", "RV2010_2018.csv"), stringsAsFactors = F)
 
 #Filter the data for the standard RV survey stratified sets.
 diversity <- rvdata%>%
