@@ -1,0 +1,72 @@
+---
+title: "Making maps with Base R and the oce package"
+output: html_notebook
+---
+
+From the RV data analysis, a common goal (for a report or paper) would be to summarize in a plot such as a map. This is easy to do using base R (where "base R" refers to using "base R *graphics*", i.e. *not* `ggplot2`), especially with the help of some of the mapping functionality in the `oce` package.
+
+## Getting the data
+
+First, we run the script that Ryan wrote to get the data in our workspace:
+
+```{r}
+source('DataSetup.R')
+d <- plotdata    # because I'm lazy
+```
+
+We can see what's in the data:
+```{r}
+str(d)
+```
+
+The simplest "map" is acheived by just plotting the lon/lat data as x/y:
+
+```{r}
+with(d, plot(long, lat))
+```
+However, this isn't a very useful map, because it contains not spatial context, other than the values of long and lat. Things like coasts and bathymetry would make this make a lot more informative.
+
+## Mapping with oce
+
+Much of the mapping capabilities in `oce` are built around `coastline` objects. These are simple objects that define the lon/lat of the points that trace out a landmass coastline. For ease, there are several global coastline data sets included with `oce` (and its sister package, `ocedata`), which are: `coastlineWorld` (lowest resolution, in `oce`), `coastlineWorldMedium` ("medium" resolution, contained in `ocedata`), and `coastlineWorldFine` (highest res, in `ocedata`, suitable for limited domains).
+
+We can get the various coastlines using the `data()` function, which loads built-in data sets:
+```{r}
+data(coastlineWorld)
+data(coastlineWorldMedium)
+data(coastlineWorldFine)
+```
+
+Thanks to the OO (object orientation), there exists a generic `plot()` method for coastline objects:
+```{r}
+plot(coastlineWorld)
+```
+
+Using a basic "long/lat" or something resembling a "Mercator" projection (i.e no real scaling on the lon/lat axes) makes the world plot look wonky because of distortion at high latitudes.
+
+For a global plot, it is almost always better to use *projected* coordinates, which can be acheived by passing the `projection=` argument in `plot.coastline()`:
+```{r}
+plot(coastlineWorld, projection='+proj=moll') # use a Molleweide projection
+```
+
+This is similar to using the specific function, `mapPlot()` which handles the projection directly. In most of the following I will use `mapPlot()` instead of the `plot,coastline-method` generic function, since it is clearer.
+
+The syntax for the projection, i.e .the `+proj=` is from the PROJ4 library, which is included in the package from the GDAL libraries (and `rgdal` package). Read the help page for `?mapPlot()` for info and links to more resources.
+
+Some other nice projections:
+```{r}
+mapPlot(coastlineWorld, projection='+proj=wintri')
+```
+
+```{r}
+mapPlot(coastlineWorld, projection='+proj=vandg')
+```
+
+```{r}
+mapPlot(coastlineWorld, projection='+proj=robin')
+```
+
+```{r}
+mapPlot(coastlineWorld, projection='+proj=igh')
+```
+
