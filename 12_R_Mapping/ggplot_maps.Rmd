@@ -278,7 +278,6 @@ Conveniently I have taken much of this code and wrapped it in functions for basi
 
 ```{r}
 source("makemap.R")
-source("BubblePlot.R")
 ```
 
 lets make a basic xyz plot of cusk
