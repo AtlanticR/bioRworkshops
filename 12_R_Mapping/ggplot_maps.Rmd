@@ -1,0 +1,273 @@
+---
+title: "Intro to making maps with ggplot"
+output: html_notebook
+---
+
+This is a basic introduction to making maps with ggplot. When looking at spatial data a first step is often to present it on a map with some geographic reference (i.e., coastline, bathymetry, island, etc..). Here we will walk through some of the basic functionality of ggplot to show how maps can be made. 
+
+ggplot2, like dplyr, is a R grammar based syntax that is focussed on plotting data contained in dataframes. 
+
+First lets load some libraries we will need. 
+
+```{r}
+library(ggplot2) #graphical plotting - based on data frames
+library(maps) #basic mapping packages with useful spatial data (i.e., bounding polygons, land, coastlines, etc)
+library(mapdata) #even more mapping data
+library(marmap) #package to get bathymetric data
+library(dplyr) #data manipulation package
+library(tidyr) #package with extended data manipulation in addition to dplyr
+library(ggsn) #package that permits scale bars in ggplot
+```
+
+Now lets load the RV data and inspect
+```{r}
+
+source("12_R_Mapping/DataSetup.R")
+
+glimpse(rvdata)
+
+```
+
+```{r}
+glimpse(plotdata)
+```
+
+```{r}
+glimpse(diversity)
+```
+
+lets plot the lats and longs
+
+```{r}
+
+ggplot()+
+  geom_point(data=plotdata,aes(x=long,y=lat))+
+  theme_bw()
+
+```
+
+This map shows the distribution of points but isn't really useful because there isn't much of a frame of reference beyond the lat and long axes, which are plotted as cartesian coordinates. Given our data is in decimal degrees this can be problematic, particularily at high latitudes. 
+
+lets get some coastline data. ggplot can calls high resolution coastline polygons from mapdata. The map_data function converts the data from mapdata into a dataframe that fits the conventional plotting grammar of ggplot. In this case the *group* variable is important as it tells ggplot which adjacent points should be linked by lines. For Canada it groups the mainland and islands. 
+```{r}
+Canada <- map_data("worldHires", "Canada")
+
+glimpse(Canada)
+
+```
+
+lets plot Canada and call that plot p1. Also lets clean up the labels a bit
+```{r}
+p1 <- ggplot() +
+  geom_polygon(data = Canada, aes(x=long, y = lat, group = group),fill="grey50") + 
+  labs(x=expression(paste("Longitude ",degree,"W",sep="")),
+       y=expression(paste("Latitude ",degree,"N",sep="")))+
+  theme_bw()
+p1
+```
+
+Here is where ggplot falls a bit on its face. ggplot is a plotting package/language that can also do maps, but is not mapping centric code. So in this case lat and long are treated as planar which is particularily problematic for the artic. We can fix that with the *coord_fixed* function, which will set the aspect ratio of x and y. In this case we will try 1.5 meaning every unit of latitude is 1.5 times longer than longitude. 
+
+```{r}
+p1+coord_fixed(1.5)
+
+```
+
+looks a bit better, but most importantly the aspect ratio chosen will now follow the map through to when it is saved. 
+
+now lets add some data to this plot
+
+```{r}
+p1+
+  coord_fixed(1.5)+
+  geom_point(data=plotdata,aes(x=long,y=lat))
+```
+
+Well that looks crappy because we are too zoomed out. We need to choose new limits for our map. We can use our data to do this. Here we will use the maximum and minimum latitude and longitude with a 0.2 decimal degree buffer around them for the map extent
+
+```{r}
+Lat.lim <- c(min(plotdata$lat,na.rm=T)-0.2,max(plotdata$lat,na.rm=T)+0.2)
+Long.lim <- c(min(plotdata$long,na.rm=T)-0.2,max(plotdata$long,na.rm=T)+0.2)
+
+Lat.lim
+Long.lim
+```
+
+now lets use the coord_fixed variable to assign a new range. We will call this basemap 'ns'. Here we will use an aspect ratio of 1.2, which is suitable for the Scotian Shelf.
+
+```{r}
+ns <- p1+
+  coord_fixed(1.2,xlim=Long.lim,ylim = Lat.lim)
+
+ns
+```
+
+Looks good but NB is looking lonely. In our plotting so far we have only applied the Canadian coastline. We have also been adding data to the plot sequentially with the *+* grammar syntax. We can now add the US coastline from the map data package directly to the plot. 
+
+```{r}
+USA <- map_data("usa")
+
+ns <- ns + geom_polygon(data = USA, aes(x=long, y = lat, group = group),fill="grey50")
+
+ns
+
+```
+
+We can also get bathymetry data using the handy marmaps package and the data limits we defined earlier. The object returned is a 'bathy' object that is transformed into a grouped dataframe (similar to the map_data package) that can be plotted. 
+```{r}
+
+#Lets add bathymetry 
+bathy <-getNOAA.bathy(Long.lim[1],Long.lim[2],Lat.lim[1],Lat.lim[2],res=1,keep=F)
+
+#convert to a dataframe so ggplot can plot it
+bathy.df <- fortify(bathy)
+
+```
+
+Lets add a bathymetry contour at 250m and 3 km. We also add the functions scale_x/y_continuous to remove the buffer that ggplot likes to add. This is a default of ggplot that can be easily dealt with but requires more code. 
+
+```{r}
+ns <- ns+
+  geom_contour(data=bathy.df,
+               aes(x=x,y=y,z=z),
+               breaks=c( -250, -2500),
+               colour="black", size=0.1)+
+  scale_y_continuous(expand=c(0,0))+ 
+  scale_x_continuous(expand=c(0,0))
+
+ns
+```
+
+Lots look back at what we are plotting
+
+```{r}
+glimpse(plotdata)
+```
+
+```{r}
+unique(plotdata$species)
+```
+```{r}
+unique(plotdata$YEAR)[order(unique(plotdata$YEAR))]
+```
+
+So this data has position and catch summaries (total weight and abundance) for three species for 8 years. Lets play with the data to make some more specific plots.
+
+```{r}
+ns+geom_point(data=filter(plotdata,species=="AMERICAN LOBSTER",YEAR %in% 2014:2016),aes(x=long,y=lat))
+```
+
+```{r}
+ns+geom_point(data=filter(plotdata,species=="COD(ATLANTIC)",YEAR %in% 2014:2016),
+              aes(x=long,y=lat))
+```
+
+We can also disaggregate the data using the ggplot facet syntax. In this case ggplot will split the plotting data by the facet variable
+
+facet by species
+
+```{r}
+ns+geom_point(data=filter(plotdata,YEAR %in% 2014:2016),
+              aes(x=long,y=lat))+
+  facet_grid(~species)
+```
+
+facet by year
+
+```{r}
+ns+geom_point(data=filter(plotdata,species=="AMERICAN LOBSTER",YEAR %in% 2014:2016),
+              aes(x=long,y=lat))+
+  facet_grid(~YEAR)
+```
+
+```{r}
+library(png)
+both <- readPNG("both.png", native = TRUE)
+plot(0:1, 0:1, type = "n", ann = FALSE, axes = FALSE)
+rasterImage(both, 0, 0, 1, 1)
+```
+
+```{r}
+ns+geom_point(data=filter(plotdata,YEAR %in% 2014:2016),
+              aes(x=long,y=lat,col=factor(YEAR)))+
+  facet_grid(~species)+ #facet by species here so points don't overlap
+  labs(col="Year")
+```
+
+Ok lets play with the data to see what we can visualize with the data. Lobster are a species on the rise in our region. Can we see this?
+
+```{r}
+ns+geom_point(data=filter(plotdata,species=="AMERICAN LOBSTER"),
+              aes(x=long,y=lat))+
+  facet_wrap(~YEAR,nrow=3)
+```
+
+Maybe if you squint. This data is really only showing us sets that lobster were found in. Lets look at some bivariate plots to see what this might mean. 
+
+```{r}
+lobsum <- plotdata%>%
+  filter(species=="AMERICAN LOBSTER")%>%
+  group_by(YEAR)%>%
+  summarise(numsets=n(),
+            mass=sum(wgt,na.rm=T),
+            totalnum = sum(abund,na.rm=T))%>%
+  ungroup()%>%
+  gather(variable,value,-YEAR)%>%
+  mutate(variable=factor(variable,levels=c("numsets","mass","totalnum")))%>%
+  data.frame()
+
+ggplot(data=lobsum,aes(x=YEAR,y=value))+
+    geom_line()+
+    geom_point(size=3)+
+    theme_bw()+
+    facet_wrap(~variable,nrow=3,scales="free_y")+
+    labs(x="Year",y="Number of sets with lobster")
+```
+
+so clearly the total number of lobsters and the mass are increasing more than the number of sets that they are found. We can visualize this by scaling the size of the points the wgt. Here we add an additional variable of wgt and the *scale_size()* function to set the limits on the point size
+
+```{r}
+ns+geom_point(data=filter(plotdata,species=="AMERICAN LOBSTER",YEAR %in% c(2010,2017)),
+              aes(x=long,y=lat,size=wgt))+
+  labs(size="Total weight (kg)")+
+  facet_wrap(~YEAR,nrow=3)+
+  scale_size(range=c(1,5))
+```
+
+the points overlap quite a bit. Lets try making them transparent. 
+
+```{r}
+lobplot <- ns+geom_point(data=filter(plotdata,species=="AMERICAN LOBSTER",YEAR %in% c(2010,2017)),
+              aes(x=long,y=lat,size=wgt),alpha=0.5)+
+  labs(size="Total weight (kg)")+
+  facet_wrap(~YEAR,nrow=3)+
+  scale_size(range=c(1,5))
+
+lobplot
+```
+
+
+Remember when I said that ggplot was not a mapping package? Well because it isn't there are no default functions for mapping information like scale bars. There is always a work around. In this case the package *ggsn* can be integrated as a data layer. 
+
+```{r}
+ p2 <- lobplot+ggsn::scalebar(plotdata,
+                 location="bottomright",
+                       dist = 100,
+                       dist_unit = "km",
+                       transform=TRUE,
+                       model = 'WGS84',
+                       facet.var = 'YEAR',
+                       facet.lev = 2017, #only in the 2017 facet
+                       st.dist = .025,
+                       st.bottom=FALSE,
+                       st.size=1.7,
+                       height = 0.015)
+p2
+```
+
+save the plot. Another annoyance about ggplot and RStudio is that plots will be wrapped in a white space. This space can be partially eliminated by setting the plot margins to 0.
+```{r}
+ggsave("LobsterPlot.png",p2+theme(plot.margin=grid::unit(c(0,0,0,0), "mm")),dpi=300)
+
+```
+
