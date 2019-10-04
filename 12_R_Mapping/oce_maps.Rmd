@@ -32,6 +32,8 @@ Much of the mapping capabilities in `oce` are built around `coastline` objects. 
 
 We can get the various coastlines using the `data()` function, which loads built-in data sets:
 ```{r}
+library(oce)
+library(ocedata)
 data(coastlineWorld)
 data(coastlineWorldMedium)
 data(coastlineWorldFine)
@@ -46,7 +48,7 @@ Using a basic "long/lat" or something resembling a "Mercator" projection (i.e no
 
 For a global plot, it is almost always better to use *projected* coordinates, which can be acheived by passing the `projection=` argument in `plot.coastline()`:
 ```{r}
-plot(coastlineWorld, projection='+proj=moll') # use a Molleweide projection
+plot(coastlineWorld, projection='+proj=moll', col='grey') # use a Molleweide projection
 ```
 
 This is similar to using the specific function, `mapPlot()` which handles the projection directly. In most of the following I will use `mapPlot()` instead of the `plot,coastline-method` generic function, since it is clearer.
@@ -55,18 +57,64 @@ The syntax for the projection, i.e .the `+proj=` is from the PROJ4 library, whic
 
 Some other nice projections:
 ```{r}
-mapPlot(coastlineWorld, projection='+proj=wintri')
+mapPlot(coastlineWorld, projection='+proj=wintri', col='grey')
 ```
 
 ```{r}
-mapPlot(coastlineWorld, projection='+proj=vandg')
+mapPlot(coastlineWorld, projection='+proj=vandg', col='grey')
 ```
 
 ```{r}
-mapPlot(coastlineWorld, projection='+proj=robin')
+mapPlot(coastlineWorld, projection='+proj=robin', col='grey')
 ```
 
 ```{r}
-mapPlot(coastlineWorld, projection='+proj=igh')
+mapPlot(coastlineWorld, projection='+proj=igh', col='grey')
+```
+
+What about the Arctic?
+```{r}
+mapPlot(coastlineWorld, projection='+proj=stere +lat_0=90', longitudelim = c(-180, 180), latitudelim = c(60, 90), col='grey')
+```
+
+
+## Non-global maps
+
+For most of us, world maps are not the end goal for when we want to plot data (e.g. the RV survery). Here I'll go over some of the arguments to use for `plot,coastline-method` and `mapPlot()` to make nice Atlantic maps.
+
+You can compare the `coastlineWorld` and `coastlineWorldFine` data sets to see what different it makes for a Maritimes view:
+```{r}
+par(mfrow=c(1, 3))
+plot(coastlineWorld, clatitude=45, clongitude=-62, span=2000, col='grey')
+plot(coastlineWorldMedium, clatitude=45, clongitude=-62, span=2000, col='grey')
+plot(coastlineWorldFine, clatitude=45, clongitude=-62, span=2000, col='grey')
+```
+
+Note the `clatitude/clongitude` and `span` arguments for `plot,coastline-method`. 
+
+Let's make a nice map that we can overlay the RV data on. This time we'll use `mapPlot` but just with the 
+
+```{r}
+mapPlot(coastlineWorldFine, longitudelim = c(-66, -58), latitudelim=c(40, 50),
+        projection='+proj=lcc +lon_0=-62', grid=FALSE, col='grey')
+m <- recordPlot()
+```
+
+We can add graticules (a grid), using the `mapGrid()` function, and then we can add points, using the "helper" function `mapPoints()`:
+```{r}
+mapPlot(coastlineWorldFine, longitudelim = c(-66, -58), latitudelim=c(40, 50),
+        projection='+proj=lcc +lon_0=-62', grid=FALSE, col='grey')
+mapGrid(2, 2)
+with(d, mapPoints(long, lat))
+```
+
+And what if we want to add detail (species, colours)? It's just like building up a normal base R plot:
+```{r}
+mapPlot(coastlineWorldFine, longitudelim = c(-66, -58), latitudelim=c(40, 50),
+        projection='+proj=lcc +lon_0=-62', grid=FALSE, col='grey')
+mapGrid(2, 2)
+with(d[d$species == 'AMERICAN LOBSTER',], mapPoints(long, lat, pch=19, cex=0.5, col=1))
+with(d[d$species == 'COD(ATLANTIC)',], mapPoints(long, lat, pch=19, cex=0.5, col=2))
+with(d[d$species == 'CUSK',], mapPoints(long, lat, pch=19, cex=0.5, col=3))
 ```
 
