@@ -17,6 +17,7 @@ library(marmap) #package to get bathymetric data
 library(dplyr) #data manipulation package
 library(tidyr) #package with extended data manipulation in addition to dplyr
 library(ggsn) #package that permits scale bars in ggplot
+library(png) #for loading images
 ```
 
 Now lets load the RV data and inspect
@@ -48,7 +49,8 @@ ggplot()+
 
 This map shows the distribution of points but isn't really useful because there isn't much of a frame of reference beyond the lat and long axes, which are plotted as cartesian coordinates. Given our data is in decimal degrees this can be problematic, particularily at high latitudes. 
 
-lets get some coastline data. ggplot can calls high resolution coastline polygons from mapdata. The map_data function converts the data from mapdata into a dataframe that fits the conventional plotting grammar of ggplot. In this case the *group* variable is important as it tells ggplot which adjacent points should be linked by lines. For Canada it groups the mainland and islands. 
+lets get some coastline data. *ggplot* can call high resolution coastline polygons from *mapdata*. The map_data function converts the data from mapdata into a dataframe that fits the conventional plotting grammar of ggplot. In this case the *group* variable is important as it tells *ggplot* which adjacent points should be linked by lines. For Canada it groups the mainland and islands. 
+
 ```{r}
 Canada <- map_data("worldHires", "Canada")
 
@@ -66,7 +68,7 @@ p1 <- ggplot() +
 p1
 ```
 
-Here is where ggplot falls a bit on its face. ggplot is a plotting package/language that can also do maps, but is not mapping centric code. So in this case lat and long are treated as planar which is particularily problematic for the artic. We can fix that with the *coord_fixed* function, which will set the aspect ratio of x and y. In this case we will try 1.5 meaning every unit of latitude is 1.5 times longer than longitude. 
+Here is where *ggplot* falls a bit on its face. *ggplot* is a plotting package/language that can also do maps, but is not mapping centric code. So in this case lat and long are treated as planar which is particularily problematic for the artic. We can fix that with the *coord_fixed* function, which will set the aspect ratio of x and y. In this case we will try 1.5 meaning every unit of latitude is 1.5 times longer than longitude. 
 
 ```{r}
 p1+coord_fixed(1.5)
@@ -93,7 +95,7 @@ Lat.lim
 Long.lim
 ```
 
-now lets use the coord_fixed variable to assign a new range. We will call this basemap 'ns'. Here we will use an aspect ratio of 1.2, which is suitable for the Scotian Shelf.
+now lets use the *coord_fixed* variable to assign a new range. We will call this basemap 'ns'. Here we will use an aspect ratio of 1.2, which is suitable for the Scotian Shelf.
 
 ```{r}
 ns <- p1+
@@ -114,6 +116,7 @@ ns
 ```
 
 We can also get bathymetry data using the handy marmaps package and the data limits we defined earlier. The object returned is a 'bathy' object that is transformed into a grouped dataframe (similar to the map_data package) that can be plotted. 
+
 ```{r}
 
 #Lets add bathymetry 
@@ -124,7 +127,7 @@ bathy.df <- fortify(bathy)
 
 ```
 
-Lets add a bathymetry contour at 250m and 3 km. We also add the functions scale_x/y_continuous to remove the buffer that ggplot likes to add. This is a default of ggplot that can be easily dealt with but requires more code. 
+Lets add a bathymetry contour at 250m and 3 km. We also add the  *scale_-_continuous* functions to remove the buffer that ggplot likes to add. This is a default of *ggplot* that can be easily dealt with but requires more code. 
 
 ```{r}
 ns <- ns+
@@ -179,6 +182,8 @@ ns+geom_point(data=filter(plotdata,species=="AMERICAN LOBSTER",YEAR %in% 2014:20
               aes(x=long,y=lat))+
   facet_grid(~YEAR)
 ```
+
+What about conveying both disaggregations at once?
 
 ```{r}
 library(png)
@@ -246,8 +251,7 @@ lobplot <- ns+geom_point(data=filter(plotdata,species=="AMERICAN LOBSTER",YEAR %
 lobplot
 ```
 
-
-Remember when I said that ggplot was not a mapping package? Well because it isn't there are no default functions for mapping information like scale bars. There is always a work around. In this case the package *ggsn* can be integrated as a data layer. 
+Remember when I said that *ggplot* was not a mapping package? Well because it isn't there are no default functions for mapping information like scale bars. There is always a work around. In this case the package *ggsn* can be integrated as a data layer. 
 
 ```{r}
  p2 <- lobplot+ggsn::scalebar(plotdata,
@@ -265,9 +269,46 @@ Remember when I said that ggplot was not a mapping package? Well because it isn'
 p2
 ```
 
-save the plot. Another annoyance about ggplot and RStudio is that plots will be wrapped in a white space. This space can be partially eliminated by setting the plot margins to 0.
+save the plot. Another annoyance about *ggplot* and *RStudio* is that plots will be wrapped in a white space. This space can be partially eliminated by setting the plot margins to 0.
 ```{r}
 ggsave("LobsterPlot.png",p2+theme(plot.margin=grid::unit(c(0,0,0,0), "mm")),dpi=300)
+```
+
+Conveniently I have taken much of this code and wrapped it in functions for basic xy plotting
+
+```{r}
+source("makemap.R")
+source("BubblePlot.R")
+```
+
+lets make a basic xyz plot of cusk
+
+```{r}
+xyz_cusk <- plotdata%>%
+          filter(species=="CUSK")%>%
+          select(long,lat,wgt)
+
+cuskmap <- makemap(xyz=xyz_cusk,bathy=TRUE)
+
+cuskmap
+```
+
+lets make a basic xyz plot of Cod 
+```{r}
+xyz_cod <- plotdata%>%
+          filter(species=="COD(ATLANTIC)",YEAR %in% c(2010,2017))%>%
+          select(long,lat,abund)
+          
+cod_facet <- plotdata%>%
+            filter(species=="COD(ATLANTIC)",YEAR %in% c(2010,2017))%>%
+            pull(YEAR)
+
+codmap <- makemap(xyz=xyz_cod,bathy=T,
+                  facet=cod_facet,
+                  zlab="Abundance",
+                  nrow=2)
+
+codmap
 
 ```
 
