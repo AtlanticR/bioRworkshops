@@ -1,0 +1,159 @@
+---
+title: "GIS with `sf`"
+output:
+  html_notebook:
+    toc: yes
+    toc_float: yes
+  html_document:
+    df_print: paged
+    toc: yes
+---
+
+This is an introduction to using R as a fully functional GIS suite (goodbye ArcGIS!) mostly with the help of the `sf` package. We'll first cover the relevant object classes that we will cover, then move on to using different projections and plotting the resulting maps. Then we'll learn how to convert `data.frame`s to `sf` format and load shapefiles. We'll finish by putting it all together by doing some 'fancy' GIS operations to answer 'complicated' questions like 'how many lobsters were caught per square km in each lobster fishing area (LFA) in the inshore (less than 10 km from shore) and offshore zones.
+
+
+```{r load packages}
+library(sf)
+library(here)
+library(rnaturalearth)
+library(tidyverse)
+```
+# Spatial Classes
+
+## data.frame
+
+So far, we have been dealing with `data.frame` class objects to represent out spatial data. This is totally fine if all we want to do is plot longitude/latitude coordinates on an x/y grid. 
+
+The `rvdata` from the previous exercise is a great example of spatial data represented in a `data.frame`.
+
+
+```{r}
+source(here("DataSetup.R"))
+
+class(rvdata)
+```
+
+However, if we want to calculate distances (m), areas (m^2), or other spatial operations (intersects, overlaps, buffers, etc) or if we want to use a special projection (*e.g.* polar projection) to make our map accurately represent our data, it becomes important to use true spatial class objects using either the `sp` or `sf` packages. These packages are an effective way to bind the relevant spatial metadata (*e.g.* projection) to the data.
+
+## `sp` (Spatial*****DataFrame)
+
+The `sp` package used to be the 'go to' spatial package for GIS type operations in R, but has now been mostly replaced by the `sf` package. Some support packages don't yet support `sf` or may return an `sp` object by default (*e.g.* `rnaturalearth) for historical and compatibility reasons.
+
+Here we'll use the `rnaturalearth` package to download a polygon of the North American landmass.
+
+```{r load sp data}
+NorthAmerica_sp <- ne_countries(continent = "north america")
+```
+
+Notice that this is not a `data.frame` format, but rather a `SpatialPolygonsDataFrame`. In this case, the data.frame, the projection, the polygons, etc are stored in 'slots' that can be accessed with the `@` symbol.
+
+```{r}
+class(NorthAmerica_sp)
+NorthAmerica_sp@data
+NorthAmerica_sp@proj4string
+```
+
+The takeaway message here is that you may run into an `sp` object in the wild, so it's important to recognize them. Their class name is usually `Spatial*****DataFrame` where `*****` can be polygons, points, etc depending on the nature of the data. 
+
+While the plotting of `sp` objects is possible using 'base' or `ggplot2` style plotting, this is covered elsewhere, You may want to take steps to avoid (see `sf` section below) or convert `sp` objects into `sf` objects. Which is accomplished using one function:
+
+```{r}
+NorthAmerica <- st_as_sf(NorthAmerica_sp)
+class(NorthAmerica)
+```
+
+## `sf` data.frame
+
+The `sf` package is replacing the `sp` package not just because it's new and shiny, but because it's **much faster**, it's mostly compatible with the `tidyverse`, and it's data structures are more intuitive (at least to me)
+
+```{r load basic data}
+NorthAmerica <- ne_countries(continent = "north america",returnclass = "sf")
+class(NorthAmerica)
+```
+
+# Projections and `dplyr`
+
+http://projectionwizard.org/#
+
+```{r}
+sp::proj4string(NorthAmerica_sp)
+st_crs(NorthAmerica)
+```
+
+```{r}
+latlong <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+maritimes_aea_proj <- "+proj=aea +lat_1=42.0 +lat_2=46.0 +lon_0=-62.0"
+maritimes_eqdc_proj <- "+proj=eqdc +lat_1=42.0 +lat_2=47.0 +lon_0=-62.0"
+arctic_laea_proj <- "+proj=laea +lat_0=90.0 +lon_0=-100.0"
+```
+
+```{r}
+CanadianArctic <- NorthAmerica %>% 
+  filter(iso_a3=="CAN") %>% 
+  st_transform(arctic_laea_proj)
+```
+
+
+# Plotting
+
+## `base`
+
+```{r}
+plot(NorthAmerica$geometry)
+```
+
+
+## `ggplot`
+
+```{r}
+ggplot(NorthAmerica) + 
+  geom_sf() +
+  theme_dark()
+```
+
+```{r}
+ggplot(CanadianArctic) + 
+  geom_sf() +
+  theme_dark()
+```
+
+
+# Converting a `data.frame` to `sf`
+
+```{r}
+sfdata <- plotdata %>% 
+  st_as_sf(coords = c("long","lat"),crs=latlong)
+```
+
+
+# Reading shapefiles
+
+Using the `sf` package, reading a shapefile is a single command!
+
+```{r}
+NAFO <- st_read(here("Divisions/Divisions.shp"))
+```
+
+# GIS operations
+
+
+
+## Overlays
+
+```{r}
+sfdata %>% 
+  st_transform(maritimes_eqdc_proj) %>% 
+  st_overlaps(st_transform(st_union(NorthAmerica),maritimes_eqdc_proj))
+```
+
+## Buffer
+
+## Distances
+
+
+
+
+
+
+
+
