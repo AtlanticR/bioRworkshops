@@ -1,15 +1,13 @@
 ---
 title: "GIS with `sf`"
 output:
-  html_notebook:
-    toc: yes
-    toc_float: yes
   html_document:
     df_print: paged
     toc: yes
+    toc_float: yes
 ---
 
-This is an introduction to using R as a fully functional GIS suite (goodbye ArcGIS!) mostly with the help of the `sf` package. We'll first cover the relevant object classes that we will cover, then move on to using different projections and plotting the resulting maps. Then we'll learn how to convert `data.frame`s to `sf` format and load shapefiles. We'll finish by putting it all together by doing some 'fancy' GIS operations to answer a 'complicated' questions: 'how many lobsters were caught per 100 km^2 in each ~~lobster fishing area (LFA)~~ [NAFO zone](https://www.nafo.int/Data/GIS) in the inshore (arbitraty definition of less than 100 km from shore) and offshore zones'.
+This is an introduction to using R as a fully functional GIS suite (goodbye ArcGIS!) mostly with the help of the `sf` package. We'll first cover the relevant object classes that we will cover, then move on to using different projections and plotting the resulting maps. Then we'll learn how to convert `data.frame`s to `sf` format and load shapefiles. We'll finish by putting it all together by doing some 'fancy' GIS operations to answer a 'complicated' questions: 'how many lobsters were caught per 100 km^2 in each ~~lobster fishing area (LFA)~~ [NAFO zone](https://www.nafo.int/Data/GIS) in the inshore (arbitrary definition of less than 100 km from shore) and offshore zones'.
 
 
 ```{r load packages, message=FALSE, warning=FALSE}
@@ -17,7 +15,7 @@ library(sf)             # package for GIS in R, loading shapefiles, projections,
 library(sp)             # old package for GIS in R
 library(here)           # package to assist in finding files
 library(rnaturalearth)  # package for basemaps
-library(tidyverse)      # dplyr, ggplo2, etc rolled into one
+library(tidyverse)      # dplyr, ggplot2, etc rolled into one
 ```
 
 # Spatial Classes
@@ -39,7 +37,7 @@ However, if we want to calculate distances (m), areas (m^2), or other spatial op
 
 ## `sp` (Spatial*****DataFrame)
 
-The `sp` package used to be the 'go to' spatial package for GIS type operations in R, but has now been mostly replaced by the `sf` package. Some support packages don't yet support `sf` or may return an `sp` object by default (*e.g.* `rnaturalearth) for historical and compatibility reasons.
+The `sp` package used to be the 'go to' spatial package for GIS type operations in R, but has now been mostly replaced by the `sf` package. Some support packages don't yet support `sf` or may return an `sp` object by default (*e.g.* `rnaturalearth`) for historical and compatibility reasons.
 
 Here we'll use the `rnaturalearth` package to download a polygon of the North American landmass.
 
@@ -49,7 +47,7 @@ world_sp <- ne_countries()
 
 Notice that this is not a `data.frame` format, but rather a `SpatialPolygonsDataFrame`. In this case, the data.frame, the projection, the polygons, etc are stored in 'slots' that can be accessed with the `@` symbol.
 
-```{r}
+```{r sp structure}
 class(world_sp)
 world_sp@data
 world_sp@proj4string
@@ -59,7 +57,7 @@ The takeaway message here is that you may run into an `sp` object in the wild, s
 
 While the plotting of `sp` objects is possible using 'base' or `ggplot2` style plotting, this is covered elsewhere, You may want to take steps to avoid (see `sf` section below) or convert `sp` objects into `sf` objects. Which is accomplished using one function:
 
-```{r}
+```{r conver to sf}
 world <- st_as_sf(world_sp)
 class(world)
 ```
@@ -68,7 +66,7 @@ class(world)
 
 The `sf` package is replacing the `sp` package not just because it's new and shiny, but because it's **much faster**, it's mostly compatible with the `tidyverse`, and it's data structures are more intuitive (at least to me)
 
-```{r load basic data}
+```{r load sf data}
 world <- ne_countries(returnclass = "sf")
 class(world)
 ```
@@ -81,14 +79,14 @@ If you're not sure which projection you would like to use, check out [Projection
 
 For objects that are already loaded, you can see their projection info:
 
-```{r}
+```{r sf structure}
 sp::proj4string(world_sp)
 st_crs(world)
 ```
 
 I will often keep a couple proj4 strings on hand to use throughout a project, usually one for converting raw lat/long data from a `data.frame` and one for plotting maps
 
-```{r}
+```{r projections}
 latlong <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0" # for converting lats/longs
 maritimes_eqdc_proj <- "+proj=eqdc +lat_1=42.0 +lat_2=47.0 +lon_0=-62.0"     # for nice plots in the maritimes
 arctic_laea_proj <- "+proj=laea +lat_0=90.0 +lon_0=-100.0"                   # for nice Arctic plots
@@ -100,21 +98,21 @@ But before we start transforming our spatial data into new projections, let's ta
 
 It is totally possible to plot `sf` objects in 'base' plot, but I won't cover this in depth here. I'll just point out that you need to be aware of your projection since you may accidentally plot things where they don't belong!
 
-```{r}
+```{r plot world}
 plot(world$geometry, col="burlywood")
 ```
 
 I personally like the bells and whistles that come with the `ggplot` system.
 
-```{r}
+```{r ggplot world}
 ggplot(world) + 
   geom_sf(fill="burlywood",alpha=0.5)
 ```
 
-We can transform our data ahead of plotting (recommended) or set the projection in ggplot with `coord_sf()` but then you need to transform the data every time you plot.
+We can transform our data ahead of plotting (recommended) or set the projection in `ggplot` with `coord_sf()` but then you need to transform the data every time you plot.
 
 
-```{r}
+```{r plot Arctic}
 Arctic <- world %>% 
   filter(continent %in% c("North America","Asia","Europe")) %>% # dplyr action to select continents
   st_transform(arctic_laea_proj)                                # transform!
@@ -123,7 +121,7 @@ ggplot(Arctic ) +
   geom_sf(fill="burlywood",alpha=0.7)
 ```
 
-```{r}
+```{r plot Arctic maritimes proj}
 ggplot(Arctic) + 
   geom_sf(fill="burlywood",alpha=0.7)+
   coord_sf(crs = maritimes_eqdc_proj)
@@ -133,9 +131,9 @@ There's a lot more plotting below, but first let's get some data ready so we can
 
 # Converting a `data.frame` to `sf`
 
-You can convert a `data.frame` to an `sf` object, but you need to tell it which columns your coordinates are in and in what coordinate reference system those are in. Here we assume that they are `r latlong` which is a proj4 string that means we have degrees latitude/longitude and we're using WGS84 as our datum If this is wrong, it could mean everything could be offset by a few meters or worse, see this [link](https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf) for more information.
+You can convert a `data.frame` to an `sf` object, but you need to tell it which columns your coordinates are in and in what coordinate reference system those are in. Here we assume that they are "`r latlong`"" which is a proj4 string that means we have degrees latitude/longitude and we're using WGS84 as our datum. If this is wrong, it could mean everything could be offset by a few meters or worse, see this [link](https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf) for more information.
 
-```{r}
+```{r convert to sf}
 sfdata <- plotdata %>% 
   st_as_sf(coords = c("long","lat"),crs=latlong) %>% 
   st_transform(maritimes_eqdc_proj)
@@ -149,13 +147,13 @@ lobster <- sfdata %>%
 
 Using the `sf` package, reading a shapefile is a single command!
 
-```{r}
+```{r read NAFO}
 NAFO <- st_read(here("Divisions/Divisions.shp"))
 ```
 
 But let's filter out unnamed (i.e. `NA`) NAFO zones and transform it to the `maritimes_eqdc_proj` that we'll be using for everything below.
 
-```{r}
+```{r read clean NAFO}
 NAFO <- st_read(here("Divisions/Divisions.shp")) %>% 
   filter(!is.na(ZONE)) %>% 
   st_transform(maritimes_eqdc_proj)
@@ -167,10 +165,10 @@ NAFO <- st_read(here("Divisions/Divisions.shp")) %>%
 
 Now to answer our lobster question, we don't want to plot the whole world, so let's crop down our shapefiles to make plotting easier and faster.
 
-```{r}
+```{r crop}
 Maritimes <- ne_states(country = c("Canada", "United States of America"),returnclass = "sf") %>% 
   st_transform(maritimes_eqdc_proj) %>% # transorm
-  st_crop(st_bbox(st_buffer(lobster,100000))) # crop a bounding box with a 100km buffer around the lobster data
+  st_crop(st_bbox(st_buffer(lobster,10^5))) # crop a bounding box with a 100km buffer around the lobster data
 
 ggplot(Maritimes) + 
   geom_sf(fill="burlywood",colour="burlywood",alpha=0.7)
@@ -179,7 +177,7 @@ ggplot(Maritimes) +
 
 The plot auto-zooms to your data, but this looks a little funny, we can fix that with `coord_sf`. You could actually set `xlim` and `ylim` (being careful about coordinate systems) in `coord_sf`, but in Windows, that can make the fill in your polygons look weird until you save the plot as a `.png` using `type = "cairo"`.
 
-```{r}
+```{r plot with expand}
 ggplot(Maritimes) + 
   geom_sf(fill="burlywood",colour="burlywood",alpha=0.7) +
   coord_sf(expand=FALSE)
@@ -187,14 +185,14 @@ ggplot(Maritimes) +
 
 You can add layers of data, just like in ggplot OR your favorite GIS interface.
 
-```{r}
+```{r plot add lobster}
 ggplot(Maritimes) + 
   geom_sf(fill="burlywood",colour="burlywood",alpha=0.7) +
   geom_sf(data = lobster) +
   coord_sf(expand=FALSE) 
 ```
 
-```{r}
+```{r plot add NAFO}
 ggplot(Maritimes) + 
   geom_sf(fill="burlywood",colour="burlywood",alpha=0.7) +
   geom_sf(data = NAFO, aes(fill=ZONE)) +
@@ -205,11 +203,11 @@ ggplot(Maritimes) +
 
 Clearly, `NAFO` has not been cropped yet, but to calculate area for our lobster question, we need the 'full' areas, not the cropped area.
 
-```{r}
+```{r crop NAFO}
  NAFOcrop <- NAFO %>% 
   st_transform(maritimes_eqdc_proj) %>%        # transform
   mutate(area = st_area(geometry)) %>%         # calculate area
-  st_crop(st_bbox(st_buffer(lobster,100000)))  # crop with 100km buffer around lobster data
+  st_crop(st_bbox(st_buffer(lobster,10^5)))  # crop with 100km buffer around lobster data
 
 ggplot(Maritimes) +
   geom_sf(data = NAFOcrop, aes(fill=ZONE),colour="transparent") + 
@@ -223,15 +221,15 @@ ggplot(Maritimes) +
 
 The `sf` package has a lot of operations you can do on spatial data like `st_intersects()`, `st_overlaps()`, and `st_covers()` (see their combined [help file](https://www.rdocumentation.org/packages/sf/versions/0.8-0/topics/geos_binary_pred) for more options). These functions return a sparse index list if the shapes meet the logical condition set out by the function (*e.g.* polygon/point/line A overlaps B, or C intersects D).
 
-```{r}
+```{r covers}
 st_covers(NAFOcrop,lobster)
 ```
 
 By itself, this is not yet that useful, but with a little help from `lengths()` we can get a count of lobsters in each NAFO zone which we can then normalize by area.
 
-```{r}
+```{r lobsters per NAFO}
 NAFOcrop <- NAFOcrop %>% 
-  mutate(lobster1000sqkm=lengths(st_covers(.,lobster))/as.numeric(area)*1000000000)
+  mutate(lobster1000sqkm=lengths(st_covers(.,lobster))/as.numeric(area)*10^9)
 
 
 ggplot(Maritimes) +
@@ -244,9 +242,9 @@ ggplot(Maritimes) +
 
 See I told you we'd talk about st_buffer again! It creates a buffer around the data. We also use `st_union()` to unify all the `Maritimes` polygons to create a single buffer polygon as opposed to one for each province.
 
-```{r}
+```{r buffer}
 buffer <- st_union(Maritimes) %>% 
-  st_buffer(50000)
+  st_buffer(10^5)
 
 ggplot(buffer)+geom_sf()
 ```
@@ -257,9 +255,9 @@ But that still includes the 'land' parts, so lets extract the buffer where it in
 
 Where 2 shapes exist over one another is called the intersection. We can use `st_intersection()` to extract the **polygons** where the 2 intersect, as opposed to `st_intersect` which would just return the **sparse index list** of where the 2 intersect.
 
-```{r}
+```{r intersection}
 buffer <- st_union(Maritimes) %>% 
-  st_buffer(50000) %>% 
+  st_buffer(10^5) %>% 
   st_intersection(st_transform(NAFO,maritimes_eqdc_proj),.) %>%
   st_sf() %>% 
   mutate(shore="nearshore")
@@ -267,9 +265,9 @@ buffer <- st_union(Maritimes) %>%
 ggplot(buffer)+geom_sf()
 ```
 
-Now we've got our 'nearshore polygons', but what about the offshore polygons? We can use `st_difference()` which I like to think of as the opposite of `st_intersection()`
+Now we've got our 'near-shore polygons', but what about the offshore polygons? We can use `st_difference()` which I like to think of as the opposite of `st_intersection()`
 
-```{r}
+```{r difference}
 NAFOcropbuffer <- NAFO %>%
   filter(ZONE %in% NAFOcrop$ZONE) %>% 
   st_difference(st_union(buffer)) %>% 
@@ -280,7 +278,7 @@ ggplot(NAFOcropbuffer)+geom_sf()
 
 Now let's combine both the the near- and offshore.
 
-```{r}
+```{r combined}
 NAFOcropbuffer <- NAFO %>%
   filter(ZONE %in% NAFOcrop$ZONE) %>% 
   st_difference(st_union(buffer)) %>% 
@@ -291,17 +289,17 @@ ggplot(NAFOcropbuffer)+
   geom_sf(aes(fill=paste(ZONE,shore)))
 ```
 
-Finally we are ready to answer our question: 'how many lobsters were caught per 100 km^2 in each ~~lobster fishing area (LFA)~~ [NAFO zone](https://www.nafo.int/Data/GIS) in the inshore (arbitraty definition of less than 100 km from shore) and offshore zones'
+Finally we are ready to answer our question: 'how many lobsters were caught per 100 km^2 in each ~~lobster fishing area (LFA)~~ [NAFO zone](https://www.nafo.int/Data/GIS) in the inshore (arbitrary definition of less than 100 km from shore) and offshore zones'
 
-```{r}
+```{r final}
 NAFOcropbuffer <- NAFOcropbuffer%>% 
   mutate(area = st_area(geometry),
-         lobster1000sqkm=lengths(st_covers(.,lobster))/as.numeric(area)*1000000000) %>% 
-  st_crop(st_bbox(st_buffer(lobster,100000)))
+         lobster1000sqkm=lengths(st_covers(.,lobster))/as.numeric(area)*10^9) %>% 
+  st_crop(st_bbox(st_buffer(lobster,10^5)))
 
 
 ggplot(Maritimes) +
-  geom_sf(data = NAFOcropbuffer, aes(fill=lobster1000sqkm),colour="white") + 
+  geom_sf(data = NAFOcropbuffer, aes(fill=lobster1000sqkm),colour="transparent") + 
   geom_sf(fill="burlywood",colour="burlywood",alpha=0.7)+
   coord_sf(expand=FALSE)+
   scale_fill_distiller(palette="YlOrRd",direction=1)+
@@ -310,6 +308,65 @@ ggplot(Maritimes) +
 
 
 
+This may seem like it took a LOT of coding to get here, but a good portion was demonstrative code that I used for educational purposes. Here's how I would normally code it:
+
+```{r summary, message=FALSE, warning=FALSE}
+library(sf)             # package for GIS in R, loading shapefiles, projections, etc
+library(sp)             # old package for GIS in R
+library(here)           # package to assist in finding files
+library(rnaturalearth)  # package for basemaps
+library(tidyverse)      # dplyr, ggplot2, etc rolled into one
+
+
+# set projections -------------------------------------
+latlong <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0" 
+maritimes_eqdc_proj <- "+proj=eqdc +lat_1=42.0 +lat_2=47.0 +lon_0=-62.0"
+
+
+# load files -----------------------------
+
+source(here("DataSetup.R"))
+
+lobster <- plotdata %>% 
+  st_as_sf(coords = c("long","lat"),crs=latlong) %>% 
+  st_transform(maritimes_eqdc_proj) %>% 
+  filter(species == "AMERICAN LOBSTER")
+
+Maritimes <- ne_states(country = c("Canada", "United States of America"),returnclass = "sf") %>% 
+  st_transform(maritimes_eqdc_proj) %>% # transorm
+  st_crop(st_bbox(st_buffer(lobster,10^5)))
+
+NAFO <- st_read(here("Divisions/Divisions.shp")) %>% 
+  filter(!is.na(ZONE)) %>% 
+  st_transform(maritimes_eqdc_proj)
+
+
+# creat nearshore vs offshore ----------------------------
+
+buffer <- st_union(Maritimes) %>% 
+  st_buffer(10^5) %>% 
+  st_intersection(st_transform(NAFO,maritimes_eqdc_proj),.) %>%
+  st_sf() %>% 
+  mutate(shore="nearshore")
+
+NAFOcropbuffer <- NAFO %>%
+  st_difference(st_union(buffer)) %>% 
+  mutate(shore="offshore") %>% 
+  rbind(buffer) %>% 
+  mutate(area = st_area(geometry),
+         lobster1000sqkm=lengths(st_covers(.,lobster))/as.numeric(area)*10^9)%>% 
+  st_crop(st_bbox(st_buffer(lobster,10^5)))
+
+
+# plot ----------------------------------
+
+ggplot(Maritimes) +
+  geom_sf(data = NAFOcropbuffer, aes(fill=lobster1000sqkm),colour="transparent") + 
+  geom_sf(fill="burlywood",colour="burlywood",alpha=0.7)+
+  coord_sf(expand=FALSE)+
+  scale_fill_distiller(palette="YlOrRd",direction=1)+
+  labs(fill = "Lobsters Per 1000 km^2")
+```
 
 
 
