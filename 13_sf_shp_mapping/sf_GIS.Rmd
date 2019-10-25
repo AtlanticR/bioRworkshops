@@ -37,7 +37,7 @@ However, if we want to calculate distances (m), areas (m^2), or other spatial op
 
 ## `sp` (Spatial*****DataFrame)
 
-The `sp` package used to be the 'go to' spatial package for GIS type operations in R, but has now been mostly replaced by the `sf` package. Some support packages don't yet support `sf` or may return an `sp` object by default (*e.g.* `rnaturalearth`) for historical and compatibility reasons.
+The `sp` package used to be the 'go to' spatial package for GIS type operations in R, but has now been mostly replaced by the `sf` package (see performance comparison [here](https://insileco.github.io/2017/09/12/efficiency-of-spatial-intersects-in-r/). Some support packages don't yet support `sf` or may return an `sp` object by default (*e.g.* `rnaturalearth`) for historical and compatibility reasons.
 
 Here we'll use the `rnaturalearth` package to download a polygon of the North American landmass.
 
