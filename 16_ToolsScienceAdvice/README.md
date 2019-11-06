@@ -10,5 +10,5 @@ Dr. Paul Regular and his co-workers in Newfoundland and Labrador region contend 
 This workshop enabled us to learn about the use of interactive tools, its role in supporting Science advice, and a discussion of a path-forward to extend this to other approaches in DFO. This repository was created during this two-day workshop to share what we were able to accomplish in a limited amount of time and the potential to move forward.
 
 ***
-![](stickers-fish.jpg)
+<img src="stickers-fish.jpg" width="300px">
 ***
