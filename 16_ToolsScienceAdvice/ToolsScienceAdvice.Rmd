@@ -1,0 +1,77 @@
+---
+title: "flexdashboard + plotly + crosstalk"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+---
+
+```{r setup, include=FALSE}
+library(plotly)
+library(crosstalk)
+library(ggplot2)
+library(DT)
+lw <- read.csv("RV2010_2018.csv")
+lw <- lw[ which(lw$SPEC %in% c(10, 30, 2550) & lw$YEAR > 2014), ]
+shared_lw <- SharedData$new(lw)
+```
+
+# Model 
+=======================================
+
+Column {.sidebar}
+-------------------------------------
+
+### Inputs
+
+```{r}
+filter_select("YEAR", "Year", shared_lw, 
+                ~YEAR)
+```
+
+Column
+-------------------------------------
+
+### Length-Weight relationship
+
+```{r}
+ plot_ly(data = shared_lw) %>% 
+     add_markers(x = ~YEAR, y = ~SURFACE_TEMPERATURE, # name = "Observed",
+                 color = ~factor(SPEC)) %>% 
+                 highlight(persisten = TRUE)
+
+```
+
+#  Map
+=======================================
+
+Column
+-------------------------------------
+
+### Attempt to map
+
+```{r}
+
+p <- plot_geo(data = shared_lw, x = ~LONGITUDE, y = ~LATITUDE, color = ~COMM, 
+              frame = ~YEAR) %>%  
+  add_markers() %>%                                       
+  layout(geo = list(resolution = 50,                      
+                    showland = TRUE,                      
+                    landcolor = toRGB("grey90"),          
+                    coastlinecolor = toRGB("grey80"),
+                    projection = list(type = "mercator"),    
+                    lonaxis = list(range = c(-75, -45)),    
+                    lataxis = list(range = c(40, 50))))
+p
+```
+
+#  Data
+=======================================
+
+Column
+-------------------------------------
+
+### Results
+
+```{r}
+DT::datatable(shared_lw) 
+```
