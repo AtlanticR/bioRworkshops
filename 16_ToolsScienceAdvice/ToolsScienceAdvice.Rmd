@@ -1,8 +1,6 @@
 ---
-title: "flexdashboard + plotly + crosstalk"
-output: 
-  flexdashboard::flex_dashboard:
-    orientation: rows
+title: "An Interactive Tools Workshop for Science Advice"
+output: flexdashboard::flex_dashboard
 ---
 
 ```{r setup, include=FALSE}
@@ -10,13 +8,25 @@ library(plotly)
 library(crosstalk)
 library(ggplot2)
 library(DT)
-lw <- read.csv("RV2010_2018.csv")
-lw <- lw[ which(lw$SPEC %in% c(10, 30, 2550) & lw$YEAR > 2014), ]
-shared_lw <- SharedData$new(lw)
+rv <- read.csv("RV2010_2018.csv")
+rv <- rv[which(rv$SPEC %in% c(10, 30, 2550)), ]
+shared_rv <- SharedData$new(rv)
 ```
 
-# An Interactive Tools Workshop for Science Advice  
+Background  
 =======================================
+
+
+<div style="float: left; width: 19%; padding-right: 1%;">
+
+
+```{r, out.width = "100%"}
+knitr::include_graphics("stickers-fish.jpg")
+```
+
+</div>  
+    
+<div style="float: right; width: 80%;">
 
 November 5 2019 at BIO
 Workshop led by Dr. Paul Regular, DFO, Newfoundland and Labrador region
@@ -27,8 +37,10 @@ Dr. Paul Regular and his co-workers in Newfoundland and Labrador region contend 
 
 This workshop enabled us to learn about the use of interactive tools, its role in supporting Science advice, and a discussion of a path-forward to extend this to other approaches in DFO. This dashboard was created during the workshop to share resources and tools available at our fingertips. 
 
+</div>
 
-# Map  
+
+Map  
 =======================================
 
 Column {.sidebar}
@@ -37,22 +49,22 @@ Column {.sidebar}
 ### Inputs
 
 ```{r}
-filter_select("MISSION", "Mission", shared_lw, 
-                ~MISSION)
 
-filter_select("COMM", "Species", shared_lw, 
-                ~COMM)
+filter_select("MISSION", "Mission", shared_rv, ~MISSION)
+filter_select("COMM", "Species", shared_rv, ~COMM)
+
 ```
 
-Column
+
+Column {.tabset}
 -------------------------------------
 
-### Attempt to map
+### Map connected to filters
 
 ```{r}
 
-p <- plot_geo(data = shared_lw, x = ~LONGITUDE, y = ~LATITUDE, color = ~COMM, 
-              frame = ~YEAR) %>%  
+p <- plot_geo(data = shared_rv, x = ~LONGITUDE, y = ~LATITUDE, color = ~COMM,
+              size = ~TOTWGT) %>%  
   add_markers() %>%                                       
   layout(geo = list(resolution = 50,                      
                     showland = TRUE,                      
@@ -64,26 +76,42 @@ p <- plot_geo(data = shared_lw, x = ~LONGITUDE, y = ~LATITUDE, color = ~COMM,
 p
 ```
 
-#  x/y Plot 
+### Animated map using the plotly frame argument
+
+```{r}
+
+p <- plot_geo(data = rv, x = ~LONGITUDE, y = ~LATITUDE, color = ~COMM,
+              frame = ~YEAR, size = ~TOTWGT) %>%  
+  add_markers() %>%                                       
+  layout(geo = list(resolution = 50,                      
+                    showland = TRUE,                      
+                    landcolor = toRGB("grey90"),          
+                    coastlinecolor = toRGB("grey80"),
+                    projection = list(type = "mercator"),    
+                    lonaxis = list(range = c(-75, -45)),    
+                    lataxis = list(range = c(40, 50))))
+p
+```
+
+
+Scatterplot
 =======================================
 
 Column
 -------------------------------------
 
-### Length-Weight relationship
+### Temperature
 
 ```{r}
- plot_ly(data = shared_lw) %>% 
-     add_markers(x = ~BOTTOM_TEMPERATURE, y = ~SURFACE_TEMPERATURE, # name = "Observed",
-                 color = ~factor(SPEC)) %>% 
-                 highlight(persisten = TRUE)
+plot_ly(data = shared_rv) %>% 
+  add_markers(x = ~BOTTOM_TEMPERATURE, y = ~SURFACE_TEMPERATURE, # name = "Observed",
+              color = ~factor(SPEC)) %>% 
+  highlight(persisten = TRUE)
 
 ```
 
 
-
-
-#  Data
+Data
 =======================================
 
 Column
@@ -92,5 +120,8 @@ Column
 ### Results
 
 ```{r}
-DT::datatable(shared_lw) 
+DT::datatable(shared_rv) 
 ```
+
+
+
