@@ -2,8 +2,6 @@
 
 ## led by Paul Regular 
 November 5th and 6th 2019 
-Northwest Atlantic Fisheries Organization (NAFO)
-2 Morris Drive, Suite 100, Dartmouth, Nova Scotia, B3B 1K8
 
 In the age of big data, scientists across many fields are faced with the challenge of synthesizing and communicating information from large and complex data sets. This growth in data, alongside the computational methods used to integrate it, can make the process of communicating the results to stakeholders and managers in a meaningful way more daunting. The traditional approach of presenting information across a series of static slides and plots often fails to convey the richness of information available and, as such, important patterns and details are easily overlooked. 
 
