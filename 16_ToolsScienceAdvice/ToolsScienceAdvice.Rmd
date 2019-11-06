@@ -24,7 +24,7 @@ Workshop {data-icon="fa-laptop"}
 Column {.tabset}
 ---------------------------------------
 
-### Summary
+### Executive Summary
 
 <div style="float: left; width: 19%; padding-right: 1%;">
 
@@ -49,7 +49,7 @@ Dr. Paul Regular and his co-workers in Newfoundland and Labrador region contend 
 
 #### Outcome
 
-This workshop enabled us to learn about the use of interactive tools, its role in supporting Science advice, and a discussion of a path-forward to extend this to other approaches in DFO. This dashboard was created by Catalina Gomez and Paul Regular following the workshop to share resources and tools available at our fingertips. 
+This workshop enabled us to learn about the use of interactive tools, its role in supporting Science advice, and a discussion of a path-forward to extend this to other approaches in DFO. This dashboard was created by Paul Regular and Catalina Gomez following the workshop to share resources and tools available at our fingertips. 
 
 </div>
 
@@ -71,6 +71,9 @@ https://github.com/AtlanticR/bioRworkshops/tree/master/16_ToolsScienceAdvice
 ### Recordings 
 
 
+### Post-workshop survey results
+
+Comming soon!
 
 ### Seminar 
 
