@@ -1,6 +1,8 @@
 ---
 title: "An Interactive Tools Workshop for Science Advice"
-output: flexdashboard::flex_dashboard
+output: 
+  flexdashboard::flex_dashboard:
+    source_code: embed
 ---
 
 ```{r setup, include=FALSE}
@@ -8,8 +10,10 @@ library(plotly)
 library(crosstalk)
 library(ggplot2)
 library(DT)
+library(leaflet)
 rv <- read.csv("RV2010_2018.csv")
 rv <- rv[which(rv$SPEC %in% c(10, 30, 2550)), ]
+rv$COMM <- factor(rv$COMM)
 shared_rv <- SharedData$new(rv)
 ```
 
@@ -64,7 +68,8 @@ Column {.tabset}
 ```{r}
 
 p <- plot_geo(data = shared_rv, x = ~LONGITUDE, y = ~LATITUDE, color = ~COMM,
-              size = ~TOTWGT) %>%  
+              size = ~TOTWGT, sizes = c(10, 500),
+              colors = viridis::viridis(3)) %>%  
   add_markers() %>%                                       
   layout(geo = list(resolution = 50,                      
                     showland = TRUE,                      
@@ -76,12 +81,26 @@ p <- plot_geo(data = shared_rv, x = ~LONGITUDE, y = ~LATITUDE, color = ~COMM,
 p
 ```
 
+### Leaflet map
+
+```{r}
+
+leaflet(shared_rv) %>%
+  addTiles() %>%
+  addCircleMarkers(stroke = FALSE,
+                   fillOpacity = 0.5, radius = 3,
+                   color = ~viridis::viridis(3)[factor(COMM)])
+
+```
+
+
 ### Animated map using the plotly frame argument
 
 ```{r}
 
 p <- plot_geo(data = rv, x = ~LONGITUDE, y = ~LATITUDE, color = ~COMM,
-              frame = ~YEAR, size = ~TOTWGT) %>%  
+              frame = ~YEAR, size = ~TOTWGT, sizes = c(10, 500),
+              colors = viridis::viridis(3)) %>%  
   add_markers() %>%                                       
   layout(geo = list(resolution = 50,                      
                     showland = TRUE,                      
@@ -89,7 +108,8 @@ p <- plot_geo(data = rv, x = ~LONGITUDE, y = ~LATITUDE, color = ~COMM,
                     coastlinecolor = toRGB("grey80"),
                     projection = list(type = "mercator"),    
                     lonaxis = list(range = c(-75, -45)),    
-                    lataxis = list(range = c(40, 50))))
+                    lataxis = list(range = c(40, 50)))) %>% 
+  highlight(persisten = TRUE, off = "plotly_relayout")
 p
 ```
 
@@ -104,11 +124,14 @@ Column
 
 ```{r}
 plot_ly(data = shared_rv) %>% 
-  add_markers(x = ~BOTTOM_TEMPERATURE, y = ~SURFACE_TEMPERATURE, # name = "Observed",
-              color = ~factor(SPEC)) %>% 
-  highlight(persisten = TRUE)
+  add_markers(x = ~BOTTOM_TEMPERATURE, y = ~SURFACE_TEMPERATURE,
+              color = ~COMM, colors = viridis::viridis(3),
+              size = ~TOTWGT, sizes = c(10, 500)) %>% 
+  highlight(persisten = TRUE, off = "plotly_relayout")
 
 ```
+
+> Markers sized based on total weight captured
 
 
 Data {data-icon="fa-database"}
@@ -120,25 +143,16 @@ Column
 ### Results
 
 ```{r}
-DT::datatable(shared_rv) 
+DT::datatable(shared_rv, extensions = 'Buttons', 
+              options = list(dom = 'Bfrtip',
+                             buttons = c('csv', 'excel'))) 
 ```
 
-Code
+
+Workshop material {data-icon="fa-clone"}
 =======================================
 
 Column
 -------------------------------------
-
-https://github.com/AtlanticR/bioRworkshops/tree/master/16_ToolsScienceAdvice
-
-
-Workshop material 
-=======================================
-
-Column
--------------------------------------
-
-
-TBA
 
 
