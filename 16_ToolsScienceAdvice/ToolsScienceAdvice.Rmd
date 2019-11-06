@@ -13,9 +13,9 @@ rv <- rv[which(rv$SPEC %in% c(10, 30, 2550)), ]
 shared_rv <- SharedData$new(rv)
 ```
 
-Background  
-=======================================
 
+Background {data-icon="fa-file-alt"}
+=======================================
 
 <div style="float: left; width: 19%; padding-right: 1%;">
 
@@ -40,7 +40,7 @@ This workshop enabled us to learn about the use of interactive tools, its role i
 </div>
 
 
-Map  
+Map {data-icon="fa-map"}
 =======================================
 
 Column {.sidebar}
@@ -94,7 +94,7 @@ p
 ```
 
 
-Scatterplot
+Plots {data-icon="fa-signal"}
 =======================================
 
 Column
@@ -111,7 +111,7 @@ plot_ly(data = shared_rv) %>%
 ```
 
 
-Data
+Data {data-icon="fa-database"}
 =======================================
 
 Column
