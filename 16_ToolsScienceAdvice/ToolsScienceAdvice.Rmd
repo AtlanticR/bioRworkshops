@@ -154,7 +154,7 @@ DT::datatable(shared_rv, extensions = 'Buttons',
 ```
 
 
-Workshop material {data-icon="fa-clone"}
+Workshop {data-icon="fa-clone"}
 =======================================
 
 Column {.tabset}
