@@ -160,17 +160,41 @@ Workshop {data-icon="fa-clone"}
 Column {.tabset}
 -------------------------------------
 
-### Workshop proposal
+### Proposal
 
-https://docs.google.com/spreadsheets/d/1rWqus06dRR5TQfTOwpfq9Ul862BvzZ7rG5qXJOSuC-s/edit#gid=0
+This proposal was developed to promote learning and development relevant for staff in OESD, CESD, SPAD and PED at BIO. Full proposal was submitted in July 2019 and is accesible here: https://docs.google.com/document/d/1uMrd_UhAEI9R4wZ0bFQeYr6ZVFqTe4MA/edit
 
 ### Agenda
 
+Agenda distributed to workshop participants:
 https://docs.google.com/spreadsheets/d/1rWqus06dRR5TQfTOwpfq9Ul862BvzZ7rG5qXJOSuC-s/edit#gid=0
 
-### Code repo
+### Code repo for this flashboard (a.k.a. workshop challenge)
 
+The full repository to create this flashboard is in the Atlantic R GitHub site:
 https://github.com/AtlanticR/bioRworkshops/tree/master/16_ToolsScienceAdvice
 
 ### Recordings 
+
+
+
+### Seminar 
+
+Watch seminar:
+
+Bedford Institute of Oceanography
+Ocean and Ecosystem Science Seminar Series
+
+Wednesday November 6th 10:00 am
+Hayes Boardroom, Fish Lab FL-117
+
+Dr. Paul Regular
+*DFO Science, Newfoundland and Labrador Region*
+
+**Interactive Tools for Science Advice**
+
+Scientists across many fields are faced with the challenge of synthesizing and communicating information from large and complex data sets. This growth in data, alongside the computational methods used to integrate it, can make the process of communicating the results to stakeholders and managers in a meaningful way more daunting. The traditional approach of presenting information across a series of static slides and plots often fails to convey the richness of information available and, as such, important patterns and details are easily overlooked. This problem can be mediated through the effective use of new open source tools for building interactive visualizations. These tools allow a broader audience to conduct detailed explorations of the results, leading to a deeper and collective understanding of both the data and models used to inform Science advice. As a consequence, the peer review process is more open and accessible and the resulting science advice is improved and widely supported.
+
+
+
 
