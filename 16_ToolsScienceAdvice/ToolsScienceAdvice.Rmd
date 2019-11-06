@@ -135,9 +135,14 @@ https://github.com/AtlanticR/bioRworkshops/tree/master/16_ToolsScienceAdvice
 Workshop material 
 =======================================
 
-Column
+Column {.tabset}
 -------------------------------------
 
+### Agenda
+
+### Code repo
+
+### Recordings
 
 TBA
 
