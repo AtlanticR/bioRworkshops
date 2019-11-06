@@ -1,5 +1,5 @@
 ---
-title: "An Interactive Tools Workshop for Science Advice"
+title: "Interactive Tools for Science Advice Workshop"
 output: 
   flexdashboard::flex_dashboard:
     source_code: embed
@@ -32,14 +32,19 @@ knitr::include_graphics("stickers-fish.jpg")
     
 <div style="float: right; width: 80%;">
 
-November 5 2019 at BIO
-Workshop led by Dr. Paul Regular, DFO, Newfoundland and Labrador region
+**November 5, 2019, at BIO**  
+
+Workshop led by Dr. Paul Regular, DFO, Newfoundland and Labrador region  
+
+#### Abstract
 
 In the age of big data, scientists across many fields are faced with the challenge of synthesizing and communicating information from large and complex data sets. This growth in data, alongside the computational methods used to integrate it, can make the process of communicating the results to stakeholders and managers in a meaningful way more daunting. The traditional approach of presenting information across a series of static slides and plots often fails to convey the richness of information available and, as such, important patterns and details are easily overlooked. 
 
-Dr. Paul Regular and his co-workers in Newfoundland and Labrador region contend that this problem can be mediated through the effective use of new open source tools for building interactive visualizations (e.g. R packages such as flexdashboard, shiny and plotly). These tools allow a broader audience to conduct detailed explorations of the results, leading to a deeper and collective understanding of both the data and models used to inform Science advice. As a consequence, the peer review process is more open and accessible and the resulting science advice is improved and widely supported.
+Dr. Paul Regular and his co-workers in Newfoundland and Labrador region contend that this problem can be mediated through the effective use of new open source tools for building interactive visualizations (e.g. R packages such as `flexdashboard`, `shiny` and `plotly`). These tools allow a broader audience to conduct detailed explorations of the results, leading to a deeper and collective understanding of both the data and models used to inform Science advice. As a consequence, the peer review process is more open and accessible and the resulting science advice is improved and widely supported.
 
-This workshop enabled us to learn about the use of interactive tools, its role in supporting Science advice, and a discussion of a path-forward to extend this to other approaches in DFO. This dashboard was created during the workshop to share resources and tools available at our fingertips. 
+#### Outcome
+
+This workshop enabled us to learn about the use of interactive tools, its role in supporting Science advice, and a discussion of a path-forward to extend this to other approaches in DFO. This dashboard was created by Catalina Gomez and Paul Regular following the workshop to share resources and tools available at our fingertips. 
 
 </div>
 
