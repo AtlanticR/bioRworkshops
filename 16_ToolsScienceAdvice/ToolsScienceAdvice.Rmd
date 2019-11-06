@@ -123,5 +123,22 @@ Column
 DT::datatable(shared_rv) 
 ```
 
+Code
+=======================================
+
+Column
+-------------------------------------
+
+https://github.com/AtlanticR/bioRworkshops/tree/master/16_ToolsScienceAdvice
+
+
+Workshop material 
+=======================================
+
+Column
+-------------------------------------
+
+
+TBA
 
 
