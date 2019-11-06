@@ -15,7 +15,20 @@ lw <- lw[ which(lw$SPEC %in% c(10, 30, 2550) & lw$YEAR > 2014), ]
 shared_lw <- SharedData$new(lw)
 ```
 
-# Model 
+# An Interactive Tools Workshop for Science Advice  
+=======================================
+
+November 5 2019 at BIO
+Workshop led by Dr. Paul Regular, DFO, Newfoundland and Labrador region
+
+In the age of big data, scientists across many fields are faced with the challenge of synthesizing and communicating information from large and complex data sets. This growth in data, alongside the computational methods used to integrate it, can make the process of communicating the results to stakeholders and managers in a meaningful way more daunting. The traditional approach of presenting information across a series of static slides and plots often fails to convey the richness of information available and, as such, important patterns and details are easily overlooked. 
+
+Dr. Paul Regular and his co-workers in Newfoundland and Labrador region contend that this problem can be mediated through the effective use of new open source tools for building interactive visualizations (e.g. R packages such as flexdashboard, shiny and plotly). These tools allow a broader audience to conduct detailed explorations of the results, leading to a deeper and collective understanding of both the data and models used to inform Science advice. As a consequence, the peer review process is more open and accessible and the resulting science advice is improved and widely supported.
+
+This workshop enabled us to learn about the use of interactive tools, its role in supporting Science advice, and a discussion of a path-forward to extend this to other approaches in DFO. This dashboard was created during the workshop to share resources and tools available at our fingertips. 
+
+
+# Map  
 =======================================
 
 Column {.sidebar}
@@ -24,25 +37,12 @@ Column {.sidebar}
 ### Inputs
 
 ```{r}
-filter_select("YEAR", "Year", shared_lw, 
-                ~YEAR)
+filter_select("MISSION", "Mission", shared_lw, 
+                ~MISSION)
+
+filter_select("COMM", "Species", shared_lw, 
+                ~COMM)
 ```
-
-Column
--------------------------------------
-
-### Length-Weight relationship
-
-```{r}
- plot_ly(data = shared_lw) %>% 
-     add_markers(x = ~YEAR, y = ~SURFACE_TEMPERATURE, # name = "Observed",
-                 color = ~factor(SPEC)) %>% 
-                 highlight(persisten = TRUE)
-
-```
-
-#  Map
-=======================================
 
 Column
 -------------------------------------
@@ -63,6 +63,25 @@ p <- plot_geo(data = shared_lw, x = ~LONGITUDE, y = ~LATITUDE, color = ~COMM,
                     lataxis = list(range = c(40, 50))))
 p
 ```
+
+#  x/y Plot 
+=======================================
+
+Column
+-------------------------------------
+
+### Length-Weight relationship
+
+```{r}
+ plot_ly(data = shared_lw) %>% 
+     add_markers(x = ~BOTTOM_TEMPERATURE, y = ~SURFACE_TEMPERATURE, # name = "Observed",
+                 color = ~factor(SPEC)) %>% 
+                 highlight(persisten = TRUE)
+
+```
+
+
+
 
 #  Data
 =======================================
