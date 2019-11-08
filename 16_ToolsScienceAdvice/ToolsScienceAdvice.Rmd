@@ -17,7 +17,6 @@ rv$COMM <- factor(rv$COMM)
 shared_rv <- SharedData$new(rv)
 ```
 
-
 Workshop {data-icon="fa-laptop"}
 =======================================
 
@@ -47,9 +46,11 @@ In the age of big data, scientists across many fields are faced with the challen
 
 Dr. Paul Regular and his co-workers in Newfoundland and Labrador region contend that this problem can be mediated through the effective use of new open source tools for building interactive visualizations (e.g. R packages such as `flexdashboard`, `shiny` and `plotly`). These tools allow a broader audience to conduct detailed explorations of the results, leading to a deeper and collective understanding of both the data and models used to inform Science advice. As a consequence, the peer review process is more open and accessible and the resulting science advice is improved and widely supported.
 
-#### Outcome
+#### Outcome of the workshop
 
-This workshop enabled us to learn about the use of interactive tools, its role in supporting Science advice, and a discussion of a path-forward to extend this to other approaches in DFO. This dashboard was created by Paul Regular and Catalina Gomez following the workshop to share resources and tools available at our fingertips. 
+This workshop enabled us to learn about the use of interactive tools, its role in supporting Science advice, and a discussion of a path-forward to extend this to other approaches in DFO. 
+
+This dashboard was created by Paul Regular and Catalina Gomez following the workshop to share resources and tools available at our fingertips. 
 
 </div>
 
@@ -72,22 +73,13 @@ https://docs.google.com/spreadsheets/d/1rWqus06dRR5TQfTOwpfq9Ul862BvzZ7rG5qXJOSu
 <br>
 <br>
 The full repository to create this flashboard is in the Atlantic R GitHub site:
+
 https://github.com/AtlanticR/bioRworkshops/tree/master/16_ToolsScienceAdvice
 
-### Recordings 
+### BIO Seminar 
 <br>
 <br>
-Comming soon!
-
-### Post-workshop survey results
-<br>
-<br>
-Comming soon!
-
-### Seminar 
-<br>
-<br>
-Watch seminar: comming soon!
+Watch seminar: https://drive.google.com/file/d/1XHLmOl6gV4kY5_0STdk42vTarkFI0VzR/view?usp=sharing
 
 **Bedford Institute of Oceanography**
 **Ocean and Ecosystem Science Seminar Series**
@@ -102,6 +94,25 @@ Dr. Paul Regular
 
 Scientists across many fields are faced with the challenge of synthesizing and communicating information from large and complex data sets. This growth in data, alongside the computational methods used to integrate it, can make the process of communicating the results to stakeholders and managers in a meaningful way more daunting. The traditional approach of presenting information across a series of static slides and plots often fails to convey the richness of information available and, as such, important patterns and details are easily overlooked. This problem can be mediated through the effective use of new open source tools for building interactive visualizations. These tools allow a broader audience to conduct detailed explorations of the results, leading to a deeper and collective understanding of both the data and models used to inform Science advice. As a consequence, the peer review process is more open and accessible and the resulting science advice is improved and widely supported.
 
+### Pre-workshop material
+<br>
+<br>
+
+**Stock assessment output dashboard in R**  
+
+by Paul Regular
+TESA webinar 
+(recording in TESA site): https://www.gcpedia.gc.ca/wiki/DFO_Science_TESA_ETES
+
+**Intro to Shiny Apps**  
+by Chantelle Layton & Clark Richards  
+recoding - use Internet explorer: https://drive.google.com/file/d/1lk-gNbqdhpXEJKNaljfqI1oZFVev2i-L/view  
+code repo: https://github.com/AtlanticR/bioRworkshops/tree/master/14_Shiny_intro
+
+### Post-workshop survey results
+<br>
+<br>
+Comming soon!
 
 Map {data-icon="fa-map"}
 =======================================
