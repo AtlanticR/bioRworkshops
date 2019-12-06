@@ -49,3 +49,7 @@ Introduction to the grammar of data manipulation using `dplyr`. Test application
 ## 12_R_Mapping
 
 Introduction to mapping in R. 
+
+## 16_R_dashboards 
+
+Outcomes of the Interactive Tools Workshop 
