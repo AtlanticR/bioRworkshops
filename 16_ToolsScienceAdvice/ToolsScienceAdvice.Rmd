@@ -80,7 +80,9 @@ Clone and explore this dashboard to learn about the workshop.
 - Project directory name: bioRworkshops
 
 Step 5:
-Create your own dashboard and share (!) with the R group
+Create your own dashboard and share (!) 
+
+- Inventory of shiny apps and dashboards: https://docs.google.com/spreadsheets/d/1teh5CWZHJaJamUPVLxgDMtiFh3PlOSOT/edit#gid=769397193
 
 
 ### Proposal
