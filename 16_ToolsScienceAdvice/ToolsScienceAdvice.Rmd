@@ -42,7 +42,7 @@ Workshop led by Dr. Paul Regular, DFO, Newfoundland and Labrador region
 
 #### Abstract
 
-In the age of big data, scientists across many fields are faced with the challenge of synthesizing and communicating information from large and complex data sets. This growth in data, alongside the computational methods used to integrate it, can make the process of communicating the results to stakeholders and managers in a meaningful way more daunting. The traditional approach of presenting information across a series of static slides and plots often fails to convey the richness of information available and, as such, important patterns and details are easily overlooked. 
+Scientists across many fields are faced with the challenge of synthesizing and communicating information from large and complex data sets. This growth in data, alongside the computational methods used to integrate it, can make the process of communicating the results to stakeholders and managers in a meaningful way more daunting. The traditional approach of presenting information across a series of static slides and plots often fails to convey the richness of information available and, as such, important patterns and details are easily overlooked. 
 
 Dr. Paul Regular and his co-workers in Newfoundland and Labrador region contend that this problem can be mediated through the effective use of new open source tools for building interactive visualizations (e.g. R packages such as `flexdashboard`, `shiny` and `plotly`). These tools allow a broader audience to conduct detailed explorations of the results, leading to a deeper and collective understanding of both the data and models used to inform Science advice. As a consequence, the peer review process is more open and accessible and the resulting science advice is improved and widely supported.
 
@@ -60,17 +60,28 @@ This dashboard was created by Paul Regular and Catalina Gomez following the work
 **Stock assessment output dashboard in R**  
 by Paul Regular
 
-Step 1:
+Step 1: 
+Watch Paul's BIO seminar & get inspired: https://drive.google.com/file/d/1XHLmOl6gV4kY5_0STdk42vTarkFI0VzR/view?usp=sharing
+
+Step 2: 
+Watch the TESA webinar: https://www.gcpedia.gc.ca/wiki/DFO_Science_TESA_ETES
+
+Step 3:
 Download the *getting started dashboard* to your machine (and use google chrome to visualize this html): https://drive.google.com/file/d/1Nttg8aYjVJLtg_9ndDYnS131pycNbfsh/view?usp=sharing
 
+Step 4: 
+Clone and explore this dashboard to learn about the workshop. 
 
-Step 2: Watch the TESA webinar: https://www.gcpedia.gc.ca/wiki/DFO_Science_TESA_ETES
+- Open Rstudio
+- File > New Project > Version Control
+- Git
+- Clone Git Repository
+- Repository URL: https://github.com/AtlanticR/bioRworkshops.git
+- Project directory name: bioRworkshops
 
+Step 5:
+Create your own dashboard and share (!) with the R group
 
-Step 3: Watch the BIO seminar: https://drive.google.com/file/d/1XHLmOl6gV4kY5_0STdk42vTarkFI0VzR/view?usp=sharing
-
-
-Step 4: Explore this dashboard to learn about the workshop.
 
 ### Proposal
 <br>
