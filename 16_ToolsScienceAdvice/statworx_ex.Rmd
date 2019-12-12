@@ -1,0 +1,77 @@
+---
+title: "Dashing diamonds"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+    css: bootswatch-3.3.5-4/flatly/bootstrap.css
+    logo: STATWORX_2.jpg
+runtime: shiny
+---
+
+Exploratory plots 
+=======================================================================
+
+Sidebar {.sidebar data-width=700} 
+-----------------------------------------------------------------------
+
+**Exploratory plots**
+
+<br>
+
+**Scatterplots**
+
+<br>
+
+**Density plot**
+
+<br>
+
+**Summary statistics**
+
+<br>
+
+
+Row {.tabset}
+-----------------------------------------------------------------------
+
+### Scatterplot of selected variables
+
+### Density plot for selected variable
+
+Row 
+-----------------------------------------------------------------------
+
+### Maximum carats {data-width=50}
+
+### Most expensive color {data-width=50}
+
+### Maximal price {data-width=50}
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+### Summary statistics {data-width=500}
+
+Model comparison
+=======================================================================
+
+Sidebar {.sidebar data-width=700}
+-----------------------------------------------------------------------
+
+**Model comparison**
+
+<br>
+
+Row{.tabset}
+-----------------------------------------------------------------------
+
+ **Comparison of Predictions and Target**
+
+### Linear Model
+
+### Ridge Regression 
+
+Row
+-----------------------------------------------------------------------
+### Densities of predictions vs. target 
