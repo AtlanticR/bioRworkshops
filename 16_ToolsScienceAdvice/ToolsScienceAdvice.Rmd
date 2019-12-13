@@ -18,7 +18,7 @@ require(reshape2)
 require(tidyr)
 require(pandoc)
 require(plyr)
-rv <- read.csv("RV2010_2018.csv")
+rv <- read.csv("RV2010_2018_trim.csv")
 rv <- rv[which(rv$SPEC %in% c(10, 30, 2550)), ]
 rv$COMM <- factor(rv$COMM)
 shared_rv <- SharedData$new(rv)
