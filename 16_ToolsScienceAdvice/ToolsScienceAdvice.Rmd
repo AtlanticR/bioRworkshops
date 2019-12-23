@@ -6,18 +6,18 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+require(tidyverse)
 library(plotly)
 library(crosstalk)
 library(ggplot2)
 library(DT)
 library(leaflet)
-require(knitr)
-require(tidyverse)
-require(forcats)
-require(reshape2)
-require(tidyr)
-require(pandoc)
-require(plyr)
+library(forcats)
+library(knitr)
+library(reshape2)
+library(tidyr)
+#library(pandoc)
+library(plyr)
 rv <- read.csv("RV2010_2018_trim.csv")
 rv <- rv[which(rv$SPEC %in% c(10, 30, 2550)), ]
 rv$COMM <- factor(rv$COMM)
@@ -66,7 +66,7 @@ https://docs.google.com/document/d/1uMrd_UhAEI9R4wZ0bFQeYr6ZVFqTe4MA/edit
 
 This workshop enabled us to learn about the use of interactive tools, its role in supporting Science advice, and a discussion of a path-forward to extend this to other approaches in DFO. 
 
-This dashboard was created by Paul Regular and Catalina Gomez following the workshop to share resources and tools available at our fingertips. 
+This dashboard was created by Paul Regular and Catalina Gomez following the workshop to share resources and tools available at our fingertips. Freya Keyser and Jessica Sameoto contributed with content, and code for the participant evaluation section.
 
 </div>
 
@@ -285,7 +285,7 @@ Column
 ### Figure 1. Survey responses by science division.
 
 ```{r, echo=F, fig.align='center'}  
-eval <- read.csv("Y:/Projects/ShinyCourse/Markdown and dashboard/Interactive Tools For Science Advice - Workshop Evaluation .csv")
+eval <- read.csv("workshop_evaluation.csv")
 
 q1 <- data.frame(table(eval[, 2]))
 levels(q1$Var1) <- c("CESD", "OESD", "ODIS", "PED")
