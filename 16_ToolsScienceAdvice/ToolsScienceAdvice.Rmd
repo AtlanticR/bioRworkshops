@@ -11,6 +11,13 @@ library(crosstalk)
 library(ggplot2)
 library(DT)
 library(leaflet)
+require(knitr)
+require(tidyverse)
+require(forcats)
+require(reshape2)
+require(tidyr)
+require(pandoc)
+require(plyr)
 rv <- read.csv("RV2010_2018_trim.csv")
 rv <- rv[which(rv$SPEC %in% c(10, 30, 2550)), ]
 rv$COMM <- factor(rv$COMM)
@@ -122,10 +129,6 @@ https://github.com/AtlanticR/bioRworkshops/tree/master/14_Shiny_intro
 - Explore the onventory of shiny apps and dashboards under-development with contirbutions from DFO colleagues: 
 https://docs.google.com/spreadsheets/d/1teh5CWZHJaJamUPVLxgDMtiFh3PlOSOT/edit#gid=769397193
 
-### Post-workshop survey results
-<br>
-<br>
-Comming soon!
 
 Map {data-icon="fa-map"}
 =======================================
@@ -152,14 +155,14 @@ Column {.tabset}
 
 p <- plot_geo(data = shared_rv, x = ~LONGITUDE, y = ~LATITUDE, color = ~COMM,
               size = ~TOTWGT, sizes = c(10, 500),
-              colors = viridis::viridis(3)) %>%  
-  add_markers() %>%                                       
-  layout(geo = list(resolution = 50,                      
-                    showland = TRUE,                      
-                    landcolor = toRGB("grey90"),          
+              colors = viridis::viridis(3)) %>%
+  add_markers() %>%
+  layout(geo = list(resolution = 50,
+                    showland = TRUE,
+                    landcolor = toRGB("grey90"),
                     coastlinecolor = toRGB("grey80"),
-                    projection = list(type = "mercator"),    
-                    lonaxis = list(range = c(-75, -45)),    
+                    projection = list(type = "mercator"),
+                    lonaxis = list(range = c(-75, -45)),
                     lataxis = list(range = c(40, 50))))
 p
 ```
@@ -183,15 +186,15 @@ leaflet(shared_rv) %>%
 
 p <- plot_geo(data = rv, x = ~LONGITUDE, y = ~LATITUDE, color = ~COMM,
               frame = ~YEAR, size = ~TOTWGT, sizes = c(10, 500),
-              colors = viridis::viridis(3)) %>%  
-  add_markers() %>%                                       
-  layout(geo = list(resolution = 50,                      
-                    showland = TRUE,                      
-                    landcolor = toRGB("grey90"),          
+              colors = viridis::viridis(3)) %>%
+  add_markers() %>%
+  layout(geo = list(resolution = 50,
+                    showland = TRUE,
+                    landcolor = toRGB("grey90"),
                     coastlinecolor = toRGB("grey80"),
-                    projection = list(type = "mercator"),    
-                    lonaxis = list(range = c(-75, -45)),    
-                    lataxis = list(range = c(40, 50)))) %>% 
+                    projection = list(type = "mercator"),
+                    lonaxis = list(range = c(-75, -45)),
+                    lataxis = list(range = c(40, 50)))) %>%
   highlight(persisten = TRUE, off = "plotly_relayout")
 p
 ```
@@ -206,10 +209,10 @@ Column
 ### Temperature
 
 ```{r}
-plot_ly(data = shared_rv) %>% 
+plot_ly(data = shared_rv) %>%
   add_markers(x = ~BOTTOM_TEMPERATURE, y = ~SURFACE_TEMPERATURE,
               color = ~COMM, colors = viridis::viridis(3),
-              size = ~TOTWGT, sizes = c(10, 500)) %>% 
+              size = ~TOTWGT, sizes = c(10, 500)) %>%
   highlight(persisten = TRUE, off = "plotly_relayout")
 
 ```
@@ -226,8 +229,116 @@ Column
 ### Results
 
 ```{r}
-DT::datatable(shared_rv, extensions = 'Buttons', 
+DT::datatable(shared_rv, extensions = 'Buttons',
               options = list(dom = 'Bfrtip',
-                             buttons = c('csv', 'excel'))) 
+                             buttons = c('csv', 'excel')))
 ```
+
+Participant evaluation {data-icon="fa-comment"}
+=======================================
+
+
+Column
+--------------------------------------
+
+**Summary of post-workshop evaluation results**
+
+Workshop participants were asked to complete an evaluation survey at the end of the workshop. Of the 29 attendees, 19 responses were received (65% response rate). Responses were received from participants in the four Science divisions (Figure 1).
+
+Participants were asked to rate the workshop on various factors on a scale of 0-5 (low to high). The minimum rating for any question was 3, and average ratings were all above 4 (Figure 2). 
+
+All survey respondents answered that they would recommend this workshop to others. 12 respondents provided comments. They highlighted:
+
+   * the content was interesting and was highly applicable to their work activities
+   * they enjoyed engaging with others outside their normal workgroup
+   * they felt they learned a lot
+   
+ 
+All survey respondents answered that they would try the techniques used in the course. 10 respondents provided comments. They highlighted:
+
+   * the communication value of using dashboards with stakeholders or in CSAS processes to improve comprehension and transparency
+   * the efficiency of using dashboards to explore and quality control data
+
+
+There were 8 responses to the question "What were you hoping to learn in this workshop that you did not?" Responses included:
+
+   * mapping
+   * presentation methods
+   * integrating Shiny into a dashboard format
+   * more examples and more time to practice
+ 
+
+Participants were asked for suggestions of topics for future workshops. The 8 responses highlighted:
+
+   * cloud computing with RStudio
+   * Shiny
+   * spatial modelling/analysis
+   * Github
+   * R package development
+   * integrating work between units/divisions
+
+Survey respondents reported that they would be most available for future workshops between November and March (Figure 3).
+
+Column
+--------------------------------------
+
+### Figure 1. Survey responses by science division.
+
+```{r, echo=F, fig.align='center'}  
+eval <- read.csv("Y:/Projects/ShinyCourse/Markdown and dashboard/Interactive Tools For Science Advice - Workshop Evaluation .csv")
+
+q1 <- data.frame(table(eval[, 2]))
+levels(q1$Var1) <- c("CESD", "OESD", "ODIS", "PED")
+
+p <- ggplot() + geom_bar(data=q1, aes(Var1, Freq), stat="identity") + theme_classic() +
+  xlab("What Science Division are you in?") +
+  ylab("Number of respondents")
+ggplotly(p)
+```  
+
+
+### Figure 2. Summary of responses to rating questions. Each rating question was answered by 19 respondents.
+
+```{r, echo=F, fig.align='center'}
+ratings <- eval[, c(1,3:10)]
+ratings <- melt(ratings, id.vars = "Timestamp")
+ratings$variable <- as.factor(gsub(ratings$variable, pattern=".", replacement =" ", fixed=T))
+ratings$variable <- as.factor(gsub(ratings$variable, pattern="  ", replacement =" ", fixed=T))
+ratings$value <- as.numeric(ratings$value)
+
+numbering <- c("4. ", "6. ", "2. ", "7. ", "8. ", "1. ", "3. ", "5. ")
+levels(ratings$variable) <- paste0(numbering, levels(ratings$variable))
+ratings$variable <- as.factor(as.character(ratings$variable))
+
+ratings_avg <- ddply(.data=ratings, .(variable),
+                     summarize,
+                     mean_rating = mean(value))
+
+ratings$variable <- fct_rev(ratings$variable)
+
+ggplotly(ggplot() + geom_boxplot(data=ratings, aes(variable, value)) + 
+        geom_point(data=ratings_avg, aes(variable, mean_rating))+
+        theme_classic() +
+  xlab(NULL) + ylab("Rating from low to high") + 
+  ylim(0,5) +
+  coord_flip())
+
+```  
+
+### Figure 3. Participant availability by month.
+
+```{r, echo=F, fig.align='center'}
+whichmonths <- eval[, c(1,17)]
+
+df <- data.frame(month=format(ISOdatetime(2000,1:12,1,0,0,0),"%b"), num=1:12, count=NA)
+for (i in 1:12){
+  df[df$month == format(ISOdatetime(2000,1:12,1,0,0,0),"%b")[i],]$count <- length(grep(whichmonths[,2], pattern=format(ISOdatetime(2000,1:12,1,0,0,0),"%b")[i]))
+}
+
+ggplotly(ggplot() + geom_bar(data=df, aes(fct_reorder(month, num), count), stat="identity") + theme_classic() +
+  xlab("Month") +
+  ylab("Number of respondents"))
+
+```  
+
 
