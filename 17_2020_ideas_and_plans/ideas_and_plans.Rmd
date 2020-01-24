@@ -1,0 +1,62 @@
+---
+title: "2020 ideas and plans"
+output: html_notebook
+---
+
+## Things we'd like to have:
+
+* some funding available for training
+* problem-based group workshops
+* mix of advance-distribution vs on-the-fly problem solving
+* alternate instruction weeks vs problem-solving weeks
+* 
+
+## Interests (round table)
+
+* trouble-shooting
+* functions/loops/etc
+* R 101/basics
+* data wrangling
+* mapping
+* ggplot
+* plotting
+* spatial analysis/GIS
+* project collaboration/Github/issues
+* vignettes; package deep dive
+* new methods/approaches
+* making packages
+* optimizing/speeding up code
+* publication-quality plots; strategies, approaches
+* tidyverse
+* Github/git overview
+* useful/new packages
+* *apply()
+* purr package
+* dashboards
+* Shiny
+* Rmarkdown/notebooks/knitr
+* rayshader
+* aspirations
+* Rcpp
+* CSASdown reporting (Pacific)
+
+
+## Engagement ideas
+
+* cheatsheets
+* github homework for participants
+* participant package presentations (PPP)
+
+
+## Related events
+
+* David Beauchesne (Laval) workshop (Mar 27)
+* NOAA New Bedford efficiencies workshop (Mar 16 Jamie)
+
+
+
+
+
+
+
+
