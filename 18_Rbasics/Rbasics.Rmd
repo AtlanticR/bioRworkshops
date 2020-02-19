@@ -1,0 +1,74 @@
+---
+title: "R Basics"
+date: 2020-02-07
+output: html_notebook
+---
+
+THis is just regular text:
+
+```{r}
+print('this is fun')
+```
+
+# Assigning objects
+
+
+```{r}
+obj <- 3
+obj = 5
+plot(x=1, y=2)
+4 == 5
+3 -> obj
+```
+
+# Packages
+
+Install packages from CRAN:
+```{r}
+# install.packages('ggplot2')
+```
+
+Using packages:
+```{r}
+library(oce)
+```
+
+# Objects
+
+* scalar
+
+```{r}
+obj <- 3
+```
+
+* vector
+
+```{r}
+objv <- c(3, 4, 10, 1)
+objc <- c('a', 'b', "c")
+objc <- c('3', '4', '10', '1')
+o <- c(1, 2, 3, 'a', 'b', 'c')
+
+typeof(o)
+
+# coerce
+on <- as.numeric(o)
+```
+
+
+* list
+
+* arrays
+
+```{r}
+mean(on, na.rm=TRUE)
+```
+
+
+
+
+
+
+
+
+j
