@@ -1,0 +1,166 @@
+Finding CTD data in the BIO archive
+========================================================
+author: Chantelle Layton
+date: 2020 05 22
+autosize: true
+
+===
+<center>
+![](screenshots/01_RDrive.PNG)
+</center>
+
+===
+<center>
+![](screenshots/02_RDriveScience.PNG)
+</center>
+
+===
+<center>
+![](screenshots/03_RDriveBioDataSvc.PNG)
+</center>
+
+===
+<center>
+![](screenshots/05_Archive.PNG)
+</center>
+
+===
+<center>
+![](screenshots/06_ARC.PNG)
+</center>
+
+===
+<center>
+![](screenshots/07_ARCctdYears.PNG)
+</center>
+
+===
+<center>
+![](screenshots/08_ARCctdYears2.PNG)
+</center>
+
+===
+<center>
+![](screenshots/09_ARCctdYears3.PNG)
+</center>
+
+===
+<center>
+![](screenshots/10_ctd2018.PNG)
+</center>
+
+===
+<center>
+![](screenshots/12_BioDataScvSrc.PNG)
+</center>
+
+===
+<center>
+![](screenshots/13_src2010s.PNG)
+</center>
+
+===
+<center>
+![](screenshots/14_src2019.PNG)
+</center>
+
+===
+<center>
+![](screenshots/15_srcCor2019001.PNG)
+</center>
+
+===
+<center>
+![](screenshots/16_corCtd.PNG)
+</center>
+
+===
+<center>
+![](screenshots/17_corCtdFiles.PNG)
+</center>
+
+===
+<center>
+![](screenshots/18_corProcessing.PNG)
+</center>
+
+===
+<center>
+![](screenshots/19_corProcessingTime.PNG)
+</center>
+
+===
+<center>
+![](screenshots/20_corFolderlist.PNG)
+</center>
+
+===
+<center>
+![](screenshots/21_corCtdFiles.PNG)
+</center>
+
+===
+<center>
+![](screenshots/22_srcNed2019030.PNG)
+</center>
+
+===
+<center>
+![](screenshots/23_nedFolderlist.PNG)
+</center>
+
+===
+<center>
+![](screenshots/24_nedFilelist.PNG)
+</center>
+
+===
+<center>
+![](screenshots/25_nedFilelist2.PNG)
+</center>
+
+File naming convention
+===
+<center>
+![](00_fileDescription.png)
+</center>
+
+***
+### Name abbreviations for common ships
+HUD = CCGS Hudson
+
+NED = CCGS Alfred Needler
+
+TEL = CCGS Teleost
+
+COR = R/V Coriolis II
+
+### Recycled cruise names for fixed stations
+
+BCDyyyy666 = Station 2
+
+BCDyyyy667 = Bedford Basin
+
+BCDyyyy669 = Prince 5
+
+Regular expression basics
+===
+`.`  = any character
+
+`\.` = the actual dot character
+
+`.?` = `.{0,1}`
+
+`.*` = `.{0, }`
+
+`.+` = `.{1, }`
+
+
+***
+
+`\w` = any word character, including `_`
+
+`\s` = white space
+
+`\d` = any digit
+
