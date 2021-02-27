@@ -1,0 +1,45 @@
+---
+title: "Seawater functions in oce and gsw"
+output: html_notebook
+---
+
+```{r}
+library(oce)
+d <- read.oce('D001A102.ODF')
+plot(d)
+```
+```{r}
+str(d@data)
+d[['units']][['salinity']]
+```
+```{r}
+options('oceEOS')
+options(oceEOS='gsw')
+options('oceEOS')
+```
+
+```{r}
+swTheta(35, 15, 1000, eos='unesco')
+swTheta(35, 15, 1000, eos='gsw', latitude = 45, longitude = -60)
+str(swTheta(d), eos='gsw')
+```
+```{r}
+plot(d)
+```
+
+## Use the gsw package directly
+
+```{r}
+library(gsw)
+head(gsw_SA_from_SP(d[['salinity']], d[['pressure']], d[['longitude']], d[['latitude']]))
+```
+```{r}
+head(swSCTp(d))
+head(gsw_SP_from_C(d[['conductivity']]*42.914, d[['temperature']], d[['pressure']]))
+```
+
+
+
+
+
+
