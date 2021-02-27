@@ -1,0 +1,92 @@
+---
+title: "Introduction to the R `oce` package"
+author: "Clark Richards"
+date: 2020-05-08
+---
+
+# Introduction
+
+This document outlines some of the resources for a short (45 minute) discussion of thet `oce` package and how to use it.
+
+# Object orientation and why it's good
+
+Packages can define "classes", which are like special labels that you can give to objects that you use a lot. In turn, classes can have specific "methods", which are functions that know what to do to an object of a certain class. 
+
+Methods can either make use of existing "generic" functions, such as `plot()`, `summary()`, `print()`, etc, but you can also define new ones. `oce` uses both approaches.
+
+The type of classes/methods used in `oce` are what are known as "S4" object orientation. Don't worry about the details of what that means (can anyone tell my why the "S" in the name?), but suffice to say that there are a LARGE number of other packages that use this approach. S3 classes/methods are also quite common, and are a little easier to code, but are not as powerful. For a full introduction to object orientation in R check out Hadley Wickham's free book [Advanced R](https://adv-r.hadley.nz/) in particular the chapter on [OO](https://adv-r.hadley.nz/oo.html)
+
+## S4 methods in oce
+
+A typical object in oce, as defined by the "oce" class, is built around 3 "slots":
+
+1. `metadata`,
+2. `data`, and
+3. `processingLog`
+
+The objects stored in each "slot" are simply lists. The slots can be accessed directly using the `@` notation, e.g.
+
+```{r}
+library(oce)
+data(ctd) # load one of the built-in datasets
+slotNames(ctd)
+str(ctd@data)
+str(ctd@processingLog)
+```
+
+There is a nice diagram in the "Introduction to oce" vignette that shows a schematic of how oce objects are organized.
+
+However, `oce` also makes use of the `[[` accessor to pull things out of objects. So, one way to get say the "salinity" values from the ctd object is to do:
+```{r}
+str(ctd@data$salinity)
+```
+but a better way is simply to use the `[[`-generic to access the values much like a regular old R `data.frame`:
+```{r}
+str(ctd[['salinity']])
+```
+Nice! That means that you don't actually need to remember where things are stored (e.g. metadata or data), but also that if for some reason the OO mechanics behind oce ever change, the `[[` method can be updated so that the user never has to worry about it! Win.
+
+# Examples
+
+Oce has lots of built-in datasets that can be used for examples, and there is a TON of information already published (in the package vignettes, on the web, in Dan Kelley's book).
+
+## CTD data
+
+Some of the most common uses for oce are to handle CTD data (in fact, needing to read and plot CTD data was what prompted the original creation of the package some 15 years ago or so). Of course, `oce` can't do *everything* that a particular user would want, but the OO nature of the package means that there are a lot of things that can be done very quickly -- especially *reading*, *cleaning*, and *plotting* data.
+
+Included in this repo are some ODF files from recent AZMP surveys along the Halifax line (provided by Chantelle Layton, who is an R/oce guru/whiz!):
+```{r}
+list.files('data/')
+```
+
+We can read one of them using the generic `read.oce()` function, which can read almost any type of file that oce can handle:
+```{r}
+d <- read.oce('data/D001A078.ODF')
+```
+
+Once read, we can learn more about it using the `summary()` method:
+```{r}
+summary(d)
+```
+
+Looking at the class information tells us what kind(s) of object it is:
+```{r}
+class(d)
+```
+
+And we can use the generic `plot()` function to make a tailored summary plot:
+```{r}
+plot(d)
+```
+
+There are A LOT of arguments for plotting data using the generic `plot()`, which you can read more about by doing:
+```{r}
+?`plot,ctd-method`
+?plot.ctd # plot.ctd is an _alias_ for the generic plot method
+```
+
+We can also use other generic functions, such as `subset()`, to trim out portions of the data:
+```{r}
+ds <- subset(d, pressure < 40)
+plot(ds)
+```
